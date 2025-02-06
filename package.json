@@ -1,0 +1,15 @@
+{
+  "name": "ticketing-tool",
+  "version": "1.0.0",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "disgroove": "^2.2.5-dev.8ca7d6a",
+    "mongoose": "^8.9.6"
+  }
+}
