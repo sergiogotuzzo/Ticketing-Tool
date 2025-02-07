@@ -8,6 +8,8 @@ const {
   ChannelTypes,
   BitwisePermissionFlags,
   ButtonStyles,
+  unixTimestamp,
+  TimestampStyles,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 
@@ -56,6 +58,12 @@ module.exports = {
       {
         name: `ticket-${interaction.member.user.globalName}`,
         type: ChannelTypes.GuildText,
+        topic: `Ticket opened by @${
+          interaction.member.user.globalName
+        } ${unixTimestamp(
+          Math.floor(Date.now() / 1000.0),
+          TimestampStyles.RelativeTime
+        )}`,
         permissionOverwrites: [
           {
             id: client.user.id,
