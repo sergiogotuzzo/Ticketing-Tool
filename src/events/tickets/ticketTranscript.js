@@ -1,0 +1,49 @@
+const {
+  Client,
+  InteractionType,
+  ComponentTypes,
+  InteractionCallbackType,
+} = require("disgroove");
+const Ticket = require("../../models/Ticket");
+const { getTranscriptMessage } = require("../../util/transcript");
+
+module.exports = {
+  name: "interactionCreate",
+  /**
+   *
+   * @param {Client} client
+   * @param {import("disgroove").Interaction} interaction
+   * @returns
+   */
+  run: async (client, interaction) => {
+    if (
+      interaction.type !== InteractionType.MessageComponent &&
+      interaction.data.componentType !== ComponentTypes.Button
+    )
+      return;
+
+    if (interaction.data.customID !== "transcript") return;
+
+    const ticketData = await Ticket.findOne({
+      guildID: interaction.guildID,
+      channelID: interaction.channelID,
+    }).catch(console.error);
+
+    if (!ticketData) return;
+
+    client.createInteractionResponse(interaction.id, interaction.token, {
+      type: InteractionCallbackType.ChannelMessageWithSource,
+      data: {
+        files: [
+          {
+            name: `${interaction.channel.name}.txt`,
+            contents: Buffer.from(
+              await getTranscriptMessage(client, interaction),
+              "utf-8"
+            ),
+          },
+        ],
+      },
+    });
+  },
+};
