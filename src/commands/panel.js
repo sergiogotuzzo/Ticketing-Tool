@@ -44,6 +44,19 @@ module.exports = {
         },
       ],
     },
+    {
+      name: "id",
+      description: "Get the ID of a panel.",
+      type: ApplicationCommandOptionType.SubCommand,
+      options: [
+        {
+          name: "link",
+          description: "The link of the panel message.",
+          type: ApplicationCommandOptionType.String,
+          required: true,
+        },
+      ],
+    },
   ],
   /**
    *
@@ -162,6 +175,48 @@ module.exports = {
           flags: MessageFlags.Ephemeral,
         },
       });
+    } else if (subCommand.name === "id") {
+      const link = subCommand.options.find(
+        (option) => option.name === "link"
+      ).value;
+
+      try {
+        const messageID = new URL(link).pathname.split("/")[4];
+
+        const panel = await Panel.findOne({
+          guildID: interaction.guildID,
+          messageID,
+        }).catch(console.error);
+
+        if (!panel)
+          return client.createInteractionResponse(
+            interaction.id,
+            interaction.token,
+            {
+              type: InteractionCallbackType.ChannelMessageWithSource,
+              data: {
+                content: `${link} is not a panel.`,
+                flags: MessageFlags.Ephemeral,
+              },
+            }
+          );
+
+        client.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            content: `The ID of ${link} is ${panel.panelID}.`,
+            flags: MessageFlags.Ephemeral,
+          },
+        });
+      } catch {
+        client.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            content: `${link} is not a panel.`,
+            flags: MessageFlags.Ephemeral,
+          },
+        });
+      }
     }
   },
 };
