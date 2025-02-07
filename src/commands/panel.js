@@ -204,7 +204,7 @@ module.exports = {
         client.createInteractionResponse(interaction.id, interaction.token, {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
-            content: `The ID of ${link} is ${panel.panelID}.`,
+            content: `The ID of ${link} is \`${panel.panelID}\`.`,
             flags: MessageFlags.Ephemeral,
           },
         });
