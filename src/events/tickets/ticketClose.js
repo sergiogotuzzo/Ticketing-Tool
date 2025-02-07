@@ -69,17 +69,6 @@ module.exports = {
               },
               disabled: true,
             },
-            {
-              type: ComponentTypes.Button,
-              label: "Unlock",
-              style: ButtonStyles.Success,
-              customID: "unlock",
-              emoji: {
-                id: null,
-                name: "🔓",
-              },
-              disabled: true,
-            },
           ],
         },
       ],

@@ -130,16 +130,6 @@ module.exports = {
                 name: "📑",
               },
             },
-            {
-              type: ComponentTypes.Button,
-              label: "Unlock",
-              style: ButtonStyles.Success,
-              customID: "unlock",
-              emoji: {
-                id: null,
-                name: "🔓",
-              },
-            },
           ],
         },
       ],
