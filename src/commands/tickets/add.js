@@ -89,10 +89,11 @@ module.exports = {
       );
 
     client.editChannelPermissions(channelID, userID, {
-      allow:
-        BitwisePermissionFlags.ViewChannel.toString() +
-        BitwisePermissionFlags.SendMessages.toString() +
-        BitwisePermissionFlags.AttachFiles.toString(),
+      allow: String(
+        BitwisePermissionFlags.ViewChannel +
+          BitwisePermissionFlags.SendMessages +
+          BitwisePermissionFlags.AttachFiles
+      ),
       type: 1,
     });
 
