@@ -72,6 +72,7 @@ module.exports = {
                 BitwisePermissionFlags.SendMessages +
                 BitwisePermissionFlags.AttachFiles
             ),
+            type: 1,
           },
           {
             id: interaction.member.user.id,
@@ -80,10 +81,12 @@ module.exports = {
                 BitwisePermissionFlags.SendMessages +
                 BitwisePermissionFlags.AttachFiles
             ),
+            type: 1,
           },
           {
             id: interaction.guildID,
             deny: String(BitwisePermissionFlags.ViewChannel),
+            type: 0,
           },
         ],
       },
