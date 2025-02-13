@@ -6,12 +6,14 @@ const {
   MessageFlags,
   ComponentTypes,
   ButtonStyles,
+  BitwisePermissionFlags,
 } = require("disgroove");
 const Panel = require("../models/Panel");
 
 module.exports = {
   name: "panel",
   description: "Manage a panel.",
+  defaultMemberPermissions: BitwisePermissionFlags.ManageChannels.toString(),
   options: [
     {
       name: "create",
