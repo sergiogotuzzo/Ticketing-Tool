@@ -138,6 +138,8 @@ module.exports = {
       ],
     });
 
+    client.pinMessage(ticketChannel.id, ticketMessage.id);
+
     Ticket.create({
       guildID: interaction.guildID,
       channelID: ticketChannel.id,
