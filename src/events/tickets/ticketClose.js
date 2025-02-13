@@ -77,7 +77,7 @@ module.exports = {
     setTimeout(async () => {
       client.deleteChannel(
         interaction.channelID,
-        `Ticket closed by @${interaction.member.user.globalName}`
+        `Ticket closed by @${interaction.member.user.username}`
       );
 
       await Ticket.findOneAndDelete({

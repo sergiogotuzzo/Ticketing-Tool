@@ -56,10 +56,10 @@ module.exports = {
     const ticketChannel = await client.createChannel(
       interaction.guildID,
       {
-        name: `ticket-${interaction.member.user.globalName}`,
+        name: `ticket-${interaction.member.user.username}`,
         type: ChannelTypes.GuildText,
         topic: `Ticket opened by @${
-          interaction.member.user.globalName
+          interaction.member.user.username
         } ${unixTimestamp(
           Math.floor(Date.now() / 1000.0),
           TimestampStyles.RelativeTime
@@ -87,7 +87,7 @@ module.exports = {
           },
         ],
       },
-      `Ticket opened by @${interaction.member.user.globalName}.`
+      `Ticket opened by @${interaction.member.user.username}.`
     );
 
     client.createInteractionResponse(interaction.id, interaction.token, {
