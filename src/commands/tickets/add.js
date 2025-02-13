@@ -9,6 +9,7 @@ const {
   userMention,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
+const { hasPermission } = require("../../util/permissions");
 
 module.exports = {
   name: "add",
@@ -61,6 +62,31 @@ module.exports = {
     const userID = interaction.data.options.find(
       (option) => option.name === "user"
     ).value;
+
+    const channel = await client.getChannel(interaction.channelID);
+
+    const permissionOverwrite = channel.permissionOverwrites.find(
+      (permissionOverwrite) => permissionOverwrite.id === userID
+    );
+
+    if (
+      permissionOverwrite &&
+      hasPermission(
+        permissionOverwrite.allow,
+        BitwisePermissionFlags.ViewChannel
+      )
+    )
+      return client.createInteractionResponse(
+        interaction.id,
+        interaction.token,
+        {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            content: `${userMention(userID)} is already in the ticket.`,
+            flags: MessageFlags.Ephemeral,
+          },
+        }
+      );
 
     client.editChannelPermissions(channelID, userID, {
       allow:
