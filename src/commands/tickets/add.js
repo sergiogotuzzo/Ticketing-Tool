@@ -10,6 +10,7 @@ const {
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { hasPermission } = require("../../util/permissions");
+const { sendLogMessage } = require("../../util/logging");
 
 module.exports = {
   name: "add",
@@ -122,6 +123,15 @@ module.exports = {
         )}.`,
         flags: MessageFlags.Ephemeral,
       },
+    });
+
+    const ticketChannel = await client.getChannel(channelID);
+
+    sendLogMessage(client, interaction.guildID, "ADD", {
+      ticketName: ticketChannel.name,
+      ownerID: ticketData.ownerID,
+      guiltyID: interaction.member.user.id,
+      victimID: userID,
     });
   },
 };

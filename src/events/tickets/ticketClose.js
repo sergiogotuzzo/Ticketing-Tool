@@ -4,8 +4,11 @@ const {
   ComponentTypes,
   ButtonStyles,
   InteractionCallbackType,
+  userMention,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
+const Config = require("../../models/Config");
+const { sendLogMessage } = require("../../util/logging");
 
 module.exports = {
   name: "interactionCreate",
@@ -83,6 +86,12 @@ module.exports = {
       await Ticket.findOneAndDelete({
         guildID: interaction.guildID,
         channelID: interaction.channelID,
+      });
+
+      sendLogMessage(client, interaction.guildID, "CLOSE", {
+        ticketName: interaction.channel.name,
+        ownerID: ticketData.ownerID,
+        guiltyID: interaction.member.user.id,
       });
     }, 5000);
   },

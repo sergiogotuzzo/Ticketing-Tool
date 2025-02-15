@@ -12,6 +12,7 @@ const {
   TimestampStyles,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
+const { sendLogMessage } = require("../../util/logging");
 
 module.exports = {
   name: "interactionCreate",
@@ -146,6 +147,11 @@ module.exports = {
       ownerID: interaction.member.user.id,
       messageID: ticketMessage.id,
       panelID,
+    });
+
+    sendLogMessage(client, interaction.guildID, "OPEN", {
+      ticketName: ticketChannel.name,
+      ownerID: interaction.member.user.id,
     });
   },
 };

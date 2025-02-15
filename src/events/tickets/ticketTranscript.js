@@ -6,6 +6,7 @@ const {
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { getTranscriptMessage } = require("../../util/transcript");
+const { sendLogTranscript, sendLogMessage } = require("../../util/logging");
 
 module.exports = {
   name: "interactionCreate",
@@ -31,19 +32,26 @@ module.exports = {
 
     if (!ticketData) return;
 
+    const transcriptFile = {
+      name: `${interaction.channel.name}.txt`,
+      contents: Buffer.from(
+        await getTranscriptMessage(client, interaction),
+        "utf-8"
+      ),
+    };
+
     client.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.ChannelMessageWithSource,
       data: {
-        files: [
-          {
-            name: `${interaction.channel.name}.txt`,
-            contents: Buffer.from(
-              await getTranscriptMessage(client, interaction),
-              "utf-8"
-            ),
-          },
-        ],
+        files: [transcriptFile],
       },
     });
+
+    sendLogMessage(client, interaction.guildID, "TRANSCRIPT_SAVE", {
+      ticketName: interaction.channel.name,
+      ownerID: ticketData.ownerID,
+      guiltyID: interaction.member.user.id,
+    });
+    sendLogTranscript(client, interaction.guildID, transcriptFile);
   },
 };
