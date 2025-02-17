@@ -7,5 +7,7 @@ module.exports = model(
     channelID: String,
     messageID: String,
     panelID: String,
+    ticketsParentID: String,
+    ticketAccessIDs: Array,
   })
 );

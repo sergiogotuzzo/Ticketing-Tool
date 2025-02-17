@@ -13,6 +13,7 @@ const {
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { sendLogMessage } = require("../../util/logging");
+const Panel = require("../../models/Panel");
 
 module.exports = {
   name: "interactionCreate",
@@ -32,6 +33,13 @@ module.exports = {
     if (!interaction.data.customID.startsWith("open")) return;
 
     const panelID = interaction.data.customID.split(".")[1];
+
+    const panelData = await Panel.findOne({
+      guildID: interaction.guildID,
+      panelID,
+    }).catch(console.error);
+
+    if (!panelData) return;
 
     const ticketData = await Ticket.findOne({
       guildID: interaction.guildID,
@@ -54,6 +62,45 @@ module.exports = {
         }
       );
 
+    const permissionOverwrites = [
+      {
+        id: client.user.id,
+        allow: String(
+          BitwisePermissionFlags.ViewChannel +
+            BitwisePermissionFlags.SendMessages +
+            BitwisePermissionFlags.AttachFiles
+        ),
+        type: 1,
+      },
+      {
+        id: interaction.member.user.id,
+        allow: String(
+          BitwisePermissionFlags.ViewChannel +
+            BitwisePermissionFlags.SendMessages +
+            BitwisePermissionFlags.AttachFiles
+        ),
+        type: 1,
+      },
+      {
+        id: interaction.guildID,
+        deny: String(BitwisePermissionFlags.ViewChannel),
+        type: 0,
+      },
+    ];
+
+    if (panelData.ticketAccessIDs.length !== 0)
+      panelData.ticketAccessIDs.forEach((ticketAccessID) =>
+        permissionOverwrites.push({
+          id: ticketAccessID,
+          allow: String(
+            BitwisePermissionFlags.ViewChannel +
+              BitwisePermissionFlags.SendMessages +
+              BitwisePermissionFlags.AttachFiles
+          ),
+          type: 0,
+        })
+      );
+
     const ticketChannel = await client.createChannel(
       interaction.guildID,
       {
@@ -65,31 +112,7 @@ module.exports = {
           Math.floor(Date.now() / 1000.0),
           TimestampStyles.RelativeTime
         )}`,
-        permissionOverwrites: [
-          {
-            id: client.user.id,
-            allow: String(
-              BitwisePermissionFlags.ViewChannel +
-                BitwisePermissionFlags.SendMessages +
-                BitwisePermissionFlags.AttachFiles
-            ),
-            type: 1,
-          },
-          {
-            id: interaction.member.user.id,
-            allow: String(
-              BitwisePermissionFlags.ViewChannel +
-                BitwisePermissionFlags.SendMessages +
-                BitwisePermissionFlags.AttachFiles
-            ),
-            type: 1,
-          },
-          {
-            id: interaction.guildID,
-            deny: String(BitwisePermissionFlags.ViewChannel),
-            type: 0,
-          },
-        ],
+        permissionOverwrites,
       },
       `Ticket opened by @${interaction.member.user.username}.`
     );

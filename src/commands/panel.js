@@ -59,6 +59,19 @@ module.exports = {
         },
       ],
     },
+    {
+      name: "manage",
+      description: "Manage a panel.",
+      type: ApplicationCommandOptionType.SubCommand,
+      options: [
+        {
+          name: "id",
+          description: "The ID of the panel.",
+          type: ApplicationCommandOptionType.String,
+          required: true,
+        },
+      ],
+    },
   ],
   /**
    *
@@ -219,6 +232,84 @@ module.exports = {
           },
         });
       }
+    } else if (subCommand.name === "manage") {
+      const panelID = subCommand.options.find(
+        (option) => option.name === "id"
+      ).value;
+
+      const panel = await Panel.findOne({
+        guildID: interaction.guildID,
+        panelID,
+      }).catch(console.error);
+
+      if (!panel)
+        return client.createInteractionResponse(
+          interaction.id,
+          interaction.token,
+          {
+            type: InteractionCallbackType.ChannelMessageWithSource,
+            data: {
+              content: `No existing \`${panelID}\` panel.`,
+              flags: MessageFlags.Ephemeral,
+            },
+          }
+        );
+
+      client.createInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionCallbackType.ChannelMessageWithSource,
+        data: {
+          embeds: [
+            {
+              title: `\`${panelID}\` management`,
+              description:
+                "La categoria dei ticket è la categoria in cui tutti i ticket verranno creati.\nI ruoli di supporto sono i ruoli che avranno l'accesso immediato ad ogni ticket.\n\nEntrambi si possono scegliere tramite i menù a tendina sottostanti.",
+            },
+          ],
+          components: [
+            {
+              type: ComponentTypes.ActionRow,
+              components: [
+                {
+                  type: ComponentTypes.ChannelSelect,
+                  customID: `panel.${panelID}.ticketsParent.set`,
+                  channelTypes: [ChannelTypes.GuildCategory],
+                  placeholder: "Select the ticket's category",
+                  defaultValues: panel.ticketsParentID
+                    ? [
+                        {
+                          id: panel.ticketsParentID,
+                          type: "channel",
+                        },
+                      ]
+                    : undefined,
+                  minValues: 0,
+                  maxValues: 1,
+                },
+              ],
+            },
+            {
+              type: ComponentTypes.ActionRow,
+              components: [
+                {
+                  type: ComponentTypes.RoleSelect,
+                  customID: `panel.${panelID}.ticketAccess.set`,
+                  placeholder: "Select the support roles",
+                  defaultValues:
+                    panel.ticketAccessIDs.length !== 0
+                      ? panel.ticketAccessIDs.map((ticketAccessID) => ({
+                          id: ticketAccessID,
+                          type: "role",
+                        }))
+                      : undefined,
+                  minValues: 0,
+                  maxValues: 5,
+                },
+              ],
+            },
+          ],
+          flags: MessageFlags.Ephemeral,
+        },
+      });
     }
   },
 };
