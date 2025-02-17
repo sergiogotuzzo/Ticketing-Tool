@@ -88,7 +88,7 @@ module.exports = {
       },
     ];
 
-    if (panelData.ticketAccessIDs.length !== 0)
+    if (panelData.ticketAccessIDs && panelData.ticketAccessIDs.length !== 0)
       panelData.ticketAccessIDs.forEach((ticketAccessID) =>
         permissionOverwrites.push({
           id: ticketAccessID,
