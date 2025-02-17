@@ -38,7 +38,7 @@ module.exports = {
         },
         {
           $set: {
-            loggingChannelID: interaction.data.values[0],
+            loggingChannelID: interaction.data.values[0] ?? null,
           },
         }
       );
