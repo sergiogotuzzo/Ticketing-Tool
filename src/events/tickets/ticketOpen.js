@@ -113,6 +113,7 @@ module.exports = {
           TimestampStyles.RelativeTime
         )}`,
         permissionOverwrites,
+        parentID: panelData.ticketsParentID ?? undefined,
       },
       `Ticket opened by @${interaction.member.user.username}.`
     );
