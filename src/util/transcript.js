@@ -19,7 +19,7 @@ async function getAllMessages(client, channelID) {
 
     allMessages = allMessages.concat(Array.from(messages.values()));
 
-    lastMessage = messages.reverse()[0].id;
+    lastMessageID = messages.reverse()[0].id;
 
     if (messages.length != 100) break;
   }
