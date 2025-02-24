@@ -38,7 +38,7 @@ module.exports = {
           {
             title: "Blacklist",
             description:
-              "La lista nera è una lista contenente gli utenti ed i ruoli che non avranno accesso al sistema di ticketing.\nTutti gli utenti ed i ruoli al suo interno non potranno creare ticket, gestire pannelli ecc...\nNon si possono aggiungere alla lista utenti o ruoli con importanza maggiore del bot (Quindi con un ruolo superiore o un amministratore).\nSe un utente o un utente con un ruolo nella lista nera viene inserito mentre ha un ticket aperto il ticket verrà chiuso dopo 5 secondi dall'inserimento dell'utente o ruolo nella lista nera.\n\nPuoi scegliere gli utenti ed i ruoli da mettere nella lista nera tramite i menù a tendina sottostanti con un limite di massimo 25 utenti e di 25 ruoli.",
+              "The blacklist is a list containing the users and roles that will not have access to the ticketing system.All users and roles within it will not be able to create tickets, manage panels, etc.Never users or roles with higher importance than the bot can be added to the list (So with a higher role or an administrator). \nIf a user or a user with a blacklisted role is added while he/she has a ticket open the ticket will be closed 5 seconds after the user or role has been added to the blacklist.\n You can choose the users and roles to be blacklisted via the drop-down menus below with a limit of a maximum of 25 users and 25 roles.",
           },
         ],
         components: [

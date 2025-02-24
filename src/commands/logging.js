@@ -39,7 +39,7 @@ module.exports = {
           {
             title: "Logging Configuration",
             description:
-              "Il logging serve a monitorare le azioni che vengono eseguite nei ticket tramite dei messaggi, mandati in un canale testuale.\nVengono mandati dati principali come il proprietario del ticket, chi ha eseguito l'azione, quando è stata eseguita l'azione, ecc.\nLe azioni che vengono monitorate sono le seguenti:\n- Apertura di un ticket\n- Chiusura di un ticket\n- Salvataggio del transcript di un ticket\n- Utente aggiunto ad un ticket\n- Utente cacciato da un ticket\n\nPer scegliere il canale di logging e le azioni da monitorare puoi cliccare i menù a tendina qui sotto.",
+              "Logging is used to monitor the actions that are performed in tickets through messages, sent in a text channel.\nMain data such as the ticket owner, who performed the action, when the action was performed, etc. are sent. \nThe actions that are monitored are as follows:\n- Opening a ticket\n- Closing a ticket\n- Saving a ticket transcript\n- User added to a ticket\n- User kicked out of a ticket\nTo choose the logging channel and the actions to be monitored you can click the drop-down menus below.",
           },
         ],
         components: [
