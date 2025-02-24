@@ -14,6 +14,7 @@ const {
 const Ticket = require("../../models/Ticket");
 const { sendLogMessage } = require("../../util/logging");
 const Panel = require("../../models/Panel");
+const Config = require("../../models/Config");
 
 module.exports = {
   name: "interactionCreate",
@@ -31,6 +32,30 @@ module.exports = {
       return;
 
     if (!interaction.data.customID.startsWith("open")) return;
+
+    const configData = await Config.findOne({
+      guildID: interaction.guildID,
+    }).catch(console.error);
+
+    if (!configData) return;
+    if (
+      configData.blacklistUsersIDs.includes(interaction.member.user.id) ||
+      configData.blacklistRolesIDs.some((blacklistRoleID) =>
+        interaction.member.roles.some((roleID) => roleID === blacklistRoleID)
+      )
+    )
+      return client.createInteractionResponse(
+        interaction.id,
+        interaction.token,
+        {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            content:
+              "You cannot open a ticket because you are in the blacklist.",
+            flags: MessageFlags.Ephemeral,
+          },
+        }
+      );
 
     const panelID = interaction.data.customID.split(".")[1];
 

@@ -6,5 +6,7 @@ module.exports = model(
     guildID: String,
     loggingChannelID: String,
     loggingActions: Array,
+    blacklistUsersIDs: Array,
+    blacklistRolesIDs: Array,
   })
 );

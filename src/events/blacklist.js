@@ -18,8 +18,8 @@ module.exports = {
     if (interaction.type !== InteractionType.MessageComponent) return;
 
     if (
-      interaction.data.componentType === ComponentTypes.ChannelSelect &&
-      interaction.data.customID === "logging.channel.set"
+      interaction.data.componentType === ComponentTypes.UserSelect &&
+      interaction.data.customID === "blacklist.users.set"
     ) {
       const configData = await Config.findOne({
         guildID: interaction.guildID,
@@ -40,7 +40,7 @@ module.exports = {
         },
         {
           $set: {
-            loggingChannelID: interaction.data.values[0] ?? null,
+            blacklistUsersIDs: interaction.data.values,
           },
         }
       );
@@ -49,8 +49,8 @@ module.exports = {
         type: InteractionCallbackType.DeferredUpdateMessage,
       });
     } else if (
-      interaction.data.componentType === ComponentTypes.StringSelect &&
-      interaction.data.customID === "logging.actions.set"
+      interaction.data.componentType === ComponentTypes.RoleSelect &&
+      interaction.data.customID === "blacklist.roles.set"
     ) {
       const configData = await Config.findOne({
         guildID: interaction.guildID,
@@ -71,7 +71,7 @@ module.exports = {
         },
         {
           $set: {
-            loggingActions: interaction.data.values,
+            blacklistRolesIDs: interaction.data.values,
           },
         }
       );
