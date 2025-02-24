@@ -41,8 +41,9 @@ module.exports = {
     client.editMessage(interaction.channelID, ticketData.messageID, {
       embeds: [
         {
-          title: "Support",
-          description: "In this ticket you can ask help.",
+          title: `${interaction.member.user.username}'s ticket`,
+          description:
+            "⛔: **To close this ticket**\n📑: **To save the transcript of this ticket**",
           color: 5793266,
         },
       ],
@@ -52,7 +53,6 @@ module.exports = {
           components: [
             {
               type: ComponentTypes.Button,
-              label: "In closing...",
               style: ButtonStyles.Danger,
               customID: "close",
               emoji: {
@@ -63,7 +63,6 @@ module.exports = {
             },
             {
               type: ComponentTypes.Button,
-              label: "Transcript",
               style: ButtonStyles.Secondary,
               customID: "transcript",
               emoji: {
