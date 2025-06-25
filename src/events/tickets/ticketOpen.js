@@ -30,7 +30,6 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-
     if (!interaction.data.customID.startsWith("open")) return;
 
     const configData = await Config.findOne({

@@ -22,7 +22,6 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-
     if (interaction.data.customID !== "transcript") return;
 
     const ticketData = await Ticket.findOne({

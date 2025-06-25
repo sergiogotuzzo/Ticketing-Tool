@@ -4,10 +4,8 @@ const {
   ComponentTypes,
   ButtonStyles,
   InteractionCallbackType,
-  userMention,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
-const Config = require("../../models/Config");
 const { sendLogMessage } = require("../../util/logging");
 
 module.exports = {
@@ -24,7 +22,6 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-
     if (interaction.data.customID !== "close") return;
 
     const ticketData = await Ticket.findOne({
