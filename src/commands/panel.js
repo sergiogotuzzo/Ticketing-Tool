@@ -284,7 +284,7 @@ module.exports = {
                 {
                   title: `\`${panelID}\` management`,
                   description:
-                    "La categoria dei ticket è la categoria in cui tutti i ticket verranno creati.\nI ruoli di supporto sono i ruoli che avranno l'accesso immediato ad ogni ticket.\n\nEntrambi si possono scegliere tramite i menù a tendina sottostanti.",
+                    "The ticket category is the category in which all tickets will be created.\nThe support roles are the roles that will have immediate access to each ticket.\n\nBoth can be chosen via the drop-down menus below.",
                 },
               ],
               components: [
