@@ -4,7 +4,7 @@ const {
   ComponentTypes,
   InteractionCallbackType,
 } = require("disgroove");
-const Config = require("../models/Config");
+const Logging = require("../models/Logging");
 
 module.exports = {
   name: "interactionCreate",
@@ -21,24 +21,19 @@ module.exports = {
       interaction.data.componentType === ComponentTypes.ChannelSelect &&
       interaction.data.customID === "logging.channel.set"
     ) {
-      const configData = await Config.findOne({
+      const loggingData = await Logging.findOne({
         guildID: interaction.guildID,
       }).catch(console.error);
 
-      if (!configData)
-        Config.create({
-          guildID: interaction.guildID,
-          loggingChannelID: null,
-          loggingActions: [],
-        });
+      if (!loggingData) return;
 
-      await Config.findOneAndUpdate(
+      await Logging.findOneAndUpdate(
         {
           guildID: interaction.guildID,
         },
         {
           $set: {
-            loggingChannelID: interaction.data.values[0] ?? null,
+            channelID: interaction.data.values[0] ?? null,
           },
         }
       );
@@ -50,24 +45,19 @@ module.exports = {
       interaction.data.componentType === ComponentTypes.StringSelect &&
       interaction.data.customID === "logging.actions.set"
     ) {
-      const configData = await Config.findOne({
+      const loggingData = await Logging.findOne({
         guildID: interaction.guildID,
       }).catch(console.error);
 
-      if (!configData)
-        Config.create({
-          guildID: interaction.guildID,
-          loggingChannelID: null,
-          loggingActions: [],
-        });
+      if (!loggingData) return;
 
-      await Config.findOneAndUpdate(
+      await Logging.findOneAndUpdate(
         {
           guildID: interaction.guildID,
         },
         {
           $set: {
-            loggingActions: interaction.data.values,
+            actions: interaction.data.values,
           },
         }
       );

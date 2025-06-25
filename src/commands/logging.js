@@ -6,7 +6,7 @@ const {
   ComponentTypes,
   BitwisePermissionFlags,
 } = require("disgroove");
-const Config = require("../models/Config");
+const Logging = require("../models/Logging");
 
 module.exports = {
   name: "logging",
@@ -18,16 +18,18 @@ module.exports = {
    * @param {import("disgroove").Interaction} interaction
    */
   run: async (client, interaction) => {
-    const configData = await Config.findOne({
+    const loggingData = await Logging.findOne({
       guildID: interaction.guildID,
     }).catch(console.error);
 
-    if (!configData)
-      Config.create({
+    if (!loggingData)
+      Logging.create({
         guildID: interaction.guildID,
-        loggingChannelID: null,
-        loggingActions: [],
+        channelID: null,
+        actions: [],
       });
+
+    console.log(loggingData.channelID);
 
     client.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.ChannelMessageWithSource,
@@ -49,10 +51,10 @@ module.exports = {
                 customID: "logging.channel.set",
                 channelTypes: [ChannelTypes.GuildText],
                 placeholder: "Select the logging channel",
-                defaultValues: configData.loggingChannelID
+                defaultValues: loggingData.channelID
                   ? [
                       {
-                        id: configData.loggingChannelID,
+                        id: loggingData.channelID,
                         type: "channel",
                       },
                     ]
@@ -73,32 +75,31 @@ module.exports = {
                     label: "Ticket opening",
                     value: "OPEN",
                     description: "When a user creates a ticket",
-                    default: configData.loggingActions.includes("OPEN"),
+                    default: loggingData.actions.includes("OPEN"),
                   },
                   {
                     label: "Ticket closing",
                     value: "CLOSE",
                     description: "When a user closes a ticket",
-                    default: configData.loggingActions.includes("CLOSE"),
+                    default: loggingData.actions.includes("CLOSE"),
                   },
                   {
                     label: "Ticket transcript save",
                     value: "TRANSCRIPT_SAVE",
                     description: "When a user save the transcript of a ticket",
-                    default:
-                      configData.loggingActions.includes("TRANSCRIPT_SAVE"),
+                    default: loggingData.actions.includes("TRANSCRIPT_SAVE"),
                   },
                   {
                     label: "User adding",
                     value: "ADD",
                     description: "When a user adds another user to a ticket",
-                    default: configData.loggingActions.includes("ADD"),
+                    default: loggingData.actions.includes("ADD"),
                   },
                   {
                     label: "User kicking",
                     value: "KICK",
                     description: "When a user kicks another user from a ticket",
-                    default: configData.loggingActions.includes("KICK"),
+                    default: loggingData.actions.includes("KICK"),
                   },
                 ],
                 placeholder: "Select the actions to log",

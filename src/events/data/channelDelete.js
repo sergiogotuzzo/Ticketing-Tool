@@ -1,6 +1,6 @@
 const { Client } = require("disgroove");
 const Ticket = require("../../models/Ticket");
-const Config = require("../../models/Config");
+const Logging = require("../../models/Logging");
 
 module.exports = {
   name: "channelDelete",
@@ -22,21 +22,21 @@ module.exports = {
       channelID: channel.id,
     });
 
-    const configData = await Config.findOne({
+    const loggingData = await Logging.findOne({
       guildID: channel.guildID,
-      loggingChannelID: channel.id,
+      channelID: channel.id,
     }).catch(console.error);
 
-    if (!configData) return;
+    if (!loggingData) return;
 
-    await Config.findOneAndUpdate(
+    await Logging.findOneAndUpdate(
       {
         guildID: channel.guildID,
-        loggingChannelID: channel.id,
+        channelID: channel.id,
       },
       {
         $set: {
-          loggingChannelID: null,
+          channelID: null,
         },
       }
     );

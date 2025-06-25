@@ -1,5 +1,5 @@
 const { userMention, Client } = require("disgroove");
-const Config = require("../models/Config");
+const Logging = require("../models/Logging");
 
 /**
  *
@@ -10,16 +10,12 @@ const Config = require("../models/Config");
  * @returns
  */
 async function sendLogMessage(client, guildID, action, data) {
-  const configData = await Config.findOne({
+  const loggingData = await Logging.findOne({
     guildID,
   }).catch(console.error);
 
-  if (!configData) return;
-  if (
-    !configData.loggingChannelID ||
-    !configData.loggingActions.includes(action)
-  )
-    return;
+  if (!loggingData) return;
+  if (!loggingData.channelID || !loggingData.actions.includes(action)) return;
 
   let embed = {
     title: "",
@@ -60,7 +56,7 @@ async function sendLogMessage(client, guildID, action, data) {
       break;
   }
 
-  client.createMessage(configData.loggingChannelID, {
+  client.createMessage(loggingData.channelID, {
     embeds: [embed],
   });
 }
@@ -73,14 +69,14 @@ async function sendLogMessage(client, guildID, action, data) {
  * @returns
  */
 async function sendLogTranscript(client, guildID, file) {
-  const configData = await Config.findOne({
+  const loggingData = await Logging.findOne({
     guildID,
   }).catch(console.error);
 
-  if (!configData) return;
-  if (!configData.loggingChannelID) return;
+  if (!loggingData) return;
+  if (!loggingData.channelID) return;
 
-  client.createMessage(configData.loggingChannelID, {
+  client.createMessage(loggingData.channelID, {
     files: [file],
   });
 }
