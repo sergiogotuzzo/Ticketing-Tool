@@ -300,7 +300,7 @@ module.exports = {
                         ? [
                             {
                               id: panel.ticketsParentID,
-                              type: "cha nnel",
+                              type: "channel",
                             },
                           ]
                         : undefined,
