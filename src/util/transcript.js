@@ -1,7 +1,7 @@
 const { Client } = require("disgroove");
 
 /**
- *
+ * SUBSCRIBES TU GIULIO AND CODE (https://www.youtube.com/@GiulioAndBasta)
  * @param {Client} client
  * @param {import("disgroove").Channel} channel
  * @returns

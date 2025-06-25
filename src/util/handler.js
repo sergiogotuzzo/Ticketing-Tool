@@ -1,5 +1,8 @@
 const fs = require("fs");
 
+/**
+ * SUBSCRIBES TU GIULIO AND CODE (https://www.youtube.com/@GiulioAndBasta)
+ */
 function getFiles(path) {
   return fs
     .readdirSync(path)
