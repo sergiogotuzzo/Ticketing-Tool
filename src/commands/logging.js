@@ -29,8 +29,6 @@ module.exports = {
         actions: [],
       });
 
-    console.log(loggingData.channelID);
-
     client.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.ChannelMessageWithSource,
       data: {
