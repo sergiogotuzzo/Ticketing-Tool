@@ -5,7 +5,7 @@ const {
   ComponentTypes,
   BitwisePermissionFlags,
 } = require("disgroove");
-const Config = require("../models/Config");
+const Blacklist = require("../models/Blacklist");
 
 module.exports = {
   name: "blacklist",
@@ -17,17 +17,15 @@ module.exports = {
    * @param {import("disgroove").Interaction} interaction
    */
   run: async (client, interaction) => {
-    const configData = await Config.findOne({
+    const blacklistData = await Blacklist.findOne({
       guildID: interaction.guildID,
     }).catch(console.error);
 
-    if (!configData)
-      Config.create({
+    if (!blacklistData)
+      Blacklist.create({
         guildID: interaction.guildID,
-        loggingChannelID: null,
-        loggingActions: [],
-        blacklistUsersIDs: [],
-        blacklistRolesIDs: [],
+        usersIDs: [],
+        rolesIDs: [],
       });
 
     client.createInteractionResponse(interaction.id, interaction.token, {
@@ -50,8 +48,8 @@ module.exports = {
                 customID: "blacklist.users.set",
                 placeholder: "Users' blacklist",
                 defaultValues:
-                  configData.blacklistUsersIDs.length !== 0
-                    ? configData.blacklistUsersIDs.map((userID) => ({
+                  blacklistData.usersIDs.length !== 0
+                    ? blacklistData.usersIDs.map((userID) => ({
                         id: userID,
                         type: "user",
                       }))
@@ -69,8 +67,8 @@ module.exports = {
                 customID: "blacklist.roles.set",
                 placeholder: "Roles' blacklist",
                 defaultValues:
-                  configData.blacklistRolesIDs.length !== 0
-                    ? configData.blacklistRolesIDs.map((roleID) => ({
+                  blacklistData.rolesIDs.length !== 0
+                    ? blacklistData.rolesIDs.map((roleID) => ({
                         id: roleID,
                         type: "role",
                       }))

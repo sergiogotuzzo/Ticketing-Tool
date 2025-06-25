@@ -30,8 +30,6 @@ module.exports = {
           guildID: interaction.guildID,
           loggingChannelID: null,
           loggingActions: [],
-          blacklistUsersIDs: [],
-          blacklistRolesIDs: [],
         });
 
       await Config.findOneAndUpdate(
@@ -61,8 +59,6 @@ module.exports = {
           guildID: interaction.guildID,
           loggingChannelID: null,
           loggingActions: [],
-          blacklistUsersIDs: [],
-          blacklistRolesIDs: [],
         });
 
       await Config.findOneAndUpdate(

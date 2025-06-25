@@ -4,7 +4,7 @@ const {
   ComponentTypes,
   InteractionCallbackType,
 } = require("disgroove");
-const Config = require("../models/Config");
+const Blacklist = require("../models/Blacklist");
 
 module.exports = {
   name: "interactionCreate",
@@ -21,26 +21,19 @@ module.exports = {
       interaction.data.componentType === ComponentTypes.UserSelect &&
       interaction.data.customID === "blacklist.users.set"
     ) {
-      const configData = await Config.findOne({
+      const blacklistData = await Blacklist.findOne({
         guildID: interaction.guildID,
       }).catch(console.error);
 
-      if (!configData)
-        Config.create({
-          guildID: interaction.guildID,
-          loggingChannelID: null,
-          loggingActions: [],
-          blacklistUsersIDs: [],
-          blacklistRolesIDs: [],
-        });
+      if (!blacklistData) return;
 
-      await Config.findOneAndUpdate(
+      await Blacklist.findOneAndUpdate(
         {
           guildID: interaction.guildID,
         },
         {
           $set: {
-            blacklistUsersIDs: interaction.data.values,
+            usersIDs: interaction.data.values,
           },
         }
       );
@@ -52,26 +45,19 @@ module.exports = {
       interaction.data.componentType === ComponentTypes.RoleSelect &&
       interaction.data.customID === "blacklist.roles.set"
     ) {
-      const configData = await Config.findOne({
+      const blacklistData = await Blacklist.findOne({
         guildID: interaction.guildID,
       }).catch(console.error);
 
-      if (!configData)
-        Config.create({
-          guildID: interaction.guildID,
-          loggingChannelID: null,
-          loggingActions: [],
-          blacklistUsersIDs: [],
-          blacklistRolesIDs: [],
-        });
+      if (!blacklistData) return;
 
-      await Config.findOneAndUpdate(
+      await Blacklist.findOneAndUpdate(
         {
           guildID: interaction.guildID,
         },
         {
           $set: {
-            blacklistRolesIDs: interaction.data.values,
+            rolesIDs: interaction.data.values,
           },
         }
       );

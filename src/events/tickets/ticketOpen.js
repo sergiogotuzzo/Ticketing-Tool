@@ -14,7 +14,7 @@ const {
 const Ticket = require("../../models/Ticket");
 const { sendLogMessage } = require("../../util/logging");
 const Panel = require("../../models/Panel");
-const Config = require("../../models/Config");
+const Blacklist = require("../../models/Blacklist");
 
 module.exports = {
   name: "interactionCreate",
@@ -32,14 +32,14 @@ module.exports = {
       return;
     if (!interaction.data.customID.startsWith("open")) return;
 
-    const configData = await Config.findOne({
+    const blacklistData = await Blacklist.findOne({
       guildID: interaction.guildID,
     }).catch(console.error);
 
-    if (!configData) return;
+    if (!blacklistData) return;
     if (
-      configData.blacklistUsersIDs.includes(interaction.member.user.id) ||
-      configData.blacklistRolesIDs.some((blacklistRoleID) =>
+      blacklistData.usersIDs.includes(interaction.member.user.id) ||
+      blacklistData.rolesIDs.some((blacklistRoleID) =>
         interaction.member.roles.some((roleID) => roleID === blacklistRoleID)
       )
     )

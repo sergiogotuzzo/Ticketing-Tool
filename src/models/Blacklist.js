@@ -1,10 +1,10 @@
 const { model, Schema } = require("mongoose");
 
 module.exports = model(
-  "Config",
+  "Blacklist",
   new Schema({
     guildID: String,
-    loggingChannelID: String,
-    loggingActions: Array,
+    usersIDs: Array,
+    rolesIDs: Array,
   })
 );

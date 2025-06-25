@@ -27,8 +27,6 @@ module.exports = {
         guildID: interaction.guildID,
         loggingChannelID: null,
         loggingActions: [],
-        blacklistUsersIDs: [],
-        blacklistRolesIDs: [],
       });
 
     client.createInteractionResponse(interaction.id, interaction.token, {
