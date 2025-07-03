@@ -9,12 +9,12 @@ const {
   userMention,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
-const { hasPermission } = require("../../util/permissions");
 const { sendLogMessage } = require("../../util/logging");
 
 module.exports = {
   name: "add",
   description: "Add a user to a ticket.",
+  defaultMemberPermissions: BitwisePermissionFlags.ManageChannels.toString(),
   options: [
     {
       name: "user",
@@ -55,23 +55,6 @@ module.exports = {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
             content: `${channelMention(channelID)} is not a ticket.`,
-            flags: MessageFlags.Ephemeral,
-          },
-        }
-      );
-    if (
-      !hasPermission(
-        interaction.member.permissions,
-        BitwisePermissionFlags.ManageChannels
-      )
-    )
-      return client.createInteractionResponse(
-        interaction.id,
-        interaction.token,
-        {
-          type: InteractionCallbackType.ChannelMessageWithSource,
-          data: {
-            content: "You don't have `Manage Channels` permission.",
             flags: MessageFlags.Ephemeral,
           },
         }
