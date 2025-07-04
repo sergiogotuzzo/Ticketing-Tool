@@ -3,6 +3,8 @@ const {
   InteractionType,
   ComponentTypes,
   InteractionCallbackType,
+  TextInputStyles,
+  ButtonStyles,
 } = require("disgroove");
 const Panel = require("../models/Panel");
 
@@ -15,66 +17,678 @@ module.exports = {
    * @returns
    */
   run: async (client, interaction) => {
-    if (interaction.type !== InteractionType.MessageComponent) return;
+    const customID = interaction.data.customID;
 
-    if (
-      interaction.data.componentType === ComponentTypes.ChannelSelect &&
-      interaction.data.customID.startsWith("panel") &&
-      interaction.data.customID.endsWith("ticketsParent.set")
-    ) {
-      const panelID = interaction.data.customID.split(".")[1];
+    if (!customID || customID.startsWith("open") || !customID.includes("."))
+      return;
 
-      const panelData = await Panel.findOne({
-        guildID: interaction.guildID,
-        panelID,
-      }).catch(console.error);
+    const panelID = customID.split(".")[0]; // "ID.category.action"
 
-      if (!panelData) return;
+    const panelData = await Panel.findOne({
+      guildID: interaction.guildID,
+      panelID,
+    }).catch(console.error);
 
-      await Panel.findOneAndUpdate(
-        {
-          guildID: interaction.guildID,
-          panelID,
-        },
-        {
-          $set: {
-            ticketsParentID: interaction.data.values[0],
+    if (!panelData) return;
+
+    const category = customID.split(".")[1];
+    const action = customID.split(".")[2];
+
+    if (interaction.type === InteractionType.MessageComponent) {
+      if (
+        interaction.data.componentType === ComponentTypes.ChannelSelect &&
+        category === "tickets-parent" &&
+        action === "set"
+      ) {
+        await Panel.findOneAndUpdate(
+          {
+            guildID: interaction.guildID,
+            panelID,
           },
+          {
+            $set: {
+              ticketsParentID: interaction.data.values[0],
+            },
+          }
+        );
+
+        client.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.DeferredUpdateMessage,
+        });
+      } else if (
+        interaction.data.componentType === ComponentTypes.RoleSelect &&
+        category === "ticket-access" &&
+        action === "set"
+      ) {
+        await Panel.findOneAndUpdate(
+          {
+            guildID: interaction.guildID,
+            panelID,
+          },
+          {
+            $set: {
+              ticketAccessIDs: interaction.data.values,
+            },
+          }
+        );
+
+        client.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.DeferredUpdateMessage,
+        });
+      } else if (interaction.data.componentType === ComponentTypes.Button) {
+        if (category === "embed" && action === "edit") {
+          const panelMessage = await client.getMessage(
+            panelData.channelID,
+            panelData.messageID
+          );
+
+          client.createInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionCallbackType.Modal,
+            data: {
+              customID: `${panelID}.embed.edit`,
+              title: `Customize \`${panelID}\` Embed`,
+              components: [
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.TextInput,
+                      customID: `${panelID}.embed.edit.title`,
+                      style: TextInputStyles.Paragraph,
+                      label: "Title",
+                      minLength: 0,
+                      maxLength: 256,
+                      required: false,
+                      value:
+                        panelMessage.embeds[0].title !== undefined
+                          ? panelMessage.embeds[0].title
+                          : undefined,
+                      placeholder: "Support",
+                    },
+                  ],
+                },
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.TextInput,
+                      customID: `${panelID}.embed.edit.description`,
+                      style: TextInputStyles.Paragraph,
+                      label: "Description",
+                      minLength: 1,
+                      maxLength: 4000,
+                      required: true,
+                      value: panelMessage.embeds[0].description,
+                      placeholder: 'Click "Open" to create a ticket.',
+                    },
+                  ],
+                },
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.TextInput,
+                      customID: `${panelID}.embed.edit.color`,
+                      style: TextInputStyles.Short,
+                      label: "Color",
+                      minLength: 1,
+                      maxLength: 10,
+                      required: true,
+                      value: panelMessage.embeds[0].color,
+                      placeholder: "5793266",
+                    },
+                  ],
+                },
+              ],
+            },
+          });
+        } else if (category === "button") {
+          if (action === "add") {
+            client.createInteractionResponse(
+              interaction.id,
+              interaction.token,
+              {
+                type: InteractionCallbackType.Modal,
+                data: {
+                  customID: `${panelID}.button.add`,
+                  title: `Add Button To \`${panelID}\``,
+                  components: [
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.add.label`,
+                          style: TextInputStyles.Short,
+                          label: "Label",
+                          minLength: 0,
+                          maxLength: 80,
+                          required: true,
+                        },
+                      ],
+                    },
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.add.emoji`,
+                          style: TextInputStyles.Short,
+                          label: "Emoji",
+                          minLength: 1,
+                          maxLength: 1,
+                          required: false,
+                        },
+                      ],
+                    },
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.add.style`,
+                          style: TextInputStyles.Short,
+                          label: "Style",
+                          minLength: 1,
+                          maxLength: 7,
+                          required: true,
+                          value: "Blurple",
+                          placeholder: "Blurple, Gray, Red or Green",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }
+            );
+          } else if (action === "remove") {
+            const panelMessage = await client.getMessage(
+              panelData.channelID,
+              panelData.messageID
+            );
+
+            const i = customID.split(".")[3];
+
+            if (i) {
+              panelMessage.components[0].components.splice(Number(i), 1);
+
+              client.editMessage(panelData.channelID, panelData.messageID, {
+                embeds: panelMessage.embeds,
+                components: [
+                  {
+                    type: ComponentTypes.ActionRow,
+                    components: panelMessage.components[0].components.map(
+                      (component, index) => ({
+                        ...component,
+                        customID: `open.${panelID}.${index}`,
+                      })
+                    ),
+                  },
+                ],
+              });
+
+              client.createInteractionResponse(
+                interaction.id,
+                interaction.token,
+                {
+                  type: InteractionCallbackType.ChannelMessageWithSource,
+                  data: {
+                    components: [
+                      {
+                        type: ComponentTypes.ActionRow,
+                        components: panelMessage.components[0].components.map(
+                          (component, index) => ({
+                            ...component,
+                            customID: `${panelID}.button.edit.${index}`,
+                          })
+                        ),
+                      },
+                      {
+                        type: ComponentTypes.ActionRow,
+                        components: [
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Primary,
+                            label: "Customize Embed",
+                            customID: `${panelID}.embed.edit`,
+                          },
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Success,
+                            label: "Add Button",
+                            customID: `${panelID}.button.add`,
+                          },
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Danger,
+                            label: "Remove Button",
+                            customID: `${panelID}.button.remove`,
+                          },
+                        ],
+                      },
+                    ],
+                    embeds: panelMessage.embeds,
+                  },
+                }
+              );
+            } else {
+              client.createInteractionResponse(
+                interaction.id,
+                interaction.token,
+                {
+                  type: InteractionCallbackType.ChannelMessageWithSource,
+                  data: {
+                    embeds: panelMessage.embeds,
+                    components: [
+                      {
+                        type: ComponentTypes.ActionRow,
+                        components: panelMessage.components[0].components.map(
+                          (component, index) => ({
+                            ...component,
+                            customID: `${panelID}.button.remove.${index}`,
+                          })
+                        ),
+                      },
+                      {
+                        type: ComponentTypes.ActionRow,
+                        components: [
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Primary,
+                            label: "Customize Embed",
+                            customID: `${panelID}.embed.edit`,
+                            disabled: true,
+                          },
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Success,
+                            label: "Add Button",
+                            customID: `${panelID}.button.add`,
+                            disabled: true,
+                          },
+                          {
+                            type: ComponentTypes.Button,
+                            style: ButtonStyles.Danger,
+                            label: "Remove Button",
+                            customID: `${panelID}.button.remove`,
+                            disabled: true,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                }
+              );
+            }
+          } else if (action === "edit") {
+            const index = customID.split(".")[3];
+
+            const panelMessage = await client.getMessage(
+              panelData.channelID,
+              panelData.messageID
+            );
+
+            let style =
+              panelMessage.components[0].components[Number(index)].style;
+
+            switch (style) {
+              case ButtonStyles.Primary:
+                {
+                  style = "Blurple";
+                }
+                break;
+              case ButtonStyles.Secondary:
+                {
+                  style = "Gray";
+                }
+                break;
+              case ButtonStyles.Danger:
+                {
+                  style = "Red";
+                }
+                break;
+              case ButtonStyles.Success:
+                {
+                  style = "Green";
+                }
+                break;
+            }
+
+            client.createInteractionResponse(
+              interaction.id,
+              interaction.token,
+              {
+                type: InteractionCallbackType.Modal,
+                data: {
+                  customID: `${panelID}.button.edit.${index}`,
+                  title: `Add Button To \`${panelID}\``,
+                  components: [
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.edit.${index}.label`,
+                          style: TextInputStyles.Short,
+                          label: "Label",
+                          minLength: 0,
+                          maxLength: 80,
+                          value:
+                            panelMessage.components[0].components[Number(index)]
+                              .label,
+                          required: true,
+                        },
+                      ],
+                    },
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.edit.${index}.emoji`,
+                          style: TextInputStyles.Short,
+                          label: "Emoji",
+                          minLength: 1,
+                          maxLength: 3,
+                          value:
+                            panelMessage.components[0].components[Number(index)]
+                              .emoji?.name !== undefined
+                              ? panelMessage.components[0].components[
+                                  Number(index)
+                                ].emoji.name
+                              : undefined,
+                          required: false,
+                        },
+                      ],
+                    },
+                    {
+                      type: ComponentTypes.ActionRow,
+                      components: [
+                        {
+                          type: ComponentTypes.TextInput,
+                          customID: `${panelID}.button.edit.${index}.style`,
+                          style: TextInputStyles.Short,
+                          label: "Style",
+                          minLength: 1,
+                          maxLength: 7,
+                          required: true,
+                          value: style,
+                          placeholder: "Blurple, Gray, Red or Green",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              }
+            );
+          }
         }
+      }
+    } else if (interaction.type === InteractionType.ModalSubmit) {
+      const panelMessage = await client.getMessage(
+        panelData.channelID,
+        panelData.messageID
       );
 
-      client.createInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionCallbackType.DeferredUpdateMessage,
-      });
-    } else if (
-      interaction.data.componentType === ComponentTypes.RoleSelect &&
-      interaction.data.customID.startsWith("panel") &&
-      interaction.data.customID.endsWith("ticketAccess.set")
-    ) {
-      const panelID = interaction.data.customID.split(".")[1];
+      if (category === "embed" && action === "edit") {
+        const title = interaction.data.components[0].components.find(
+          (component) => component.customID.endsWith("title")
+        ).value;
+        const description = interaction.data.components[1].components.find(
+          (component) => component.customID.endsWith("description")
+        ).value;
+        const color = interaction.data.components[2].components.find(
+          (component) => component.customID.endsWith("color")
+        ).value;
 
-      const panelData = await Panel.findOne({
-        guildID: interaction.guildID,
-        panelID,
-      }).catch(console.error);
+        client.editMessage(panelData.channelID, panelData.messageID, {
+          components: panelMessage.components,
+          embeds: [
+            {
+              title: title !== undefined ? title : undefined,
+              description,
+              color,
+            },
+          ],
+        });
 
-      if (!panelData) return;
-
-      await Panel.findOneAndUpdate(
-        {
-          guildID: interaction.guildID,
-          panelID,
-        },
-        {
-          $set: {
-            ticketAccessIDs: interaction.data.values,
+        client.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            components: [
+              {
+                type: ComponentTypes.ActionRow,
+                components: panelMessage.components[0].components.map(
+                  (component, index) => ({
+                    ...component,
+                    customID: `${panelID}.button.edit.${index}`,
+                  })
+                ),
+              },
+              {
+                type: ComponentTypes.ActionRow,
+                components: [
+                  {
+                    type: ComponentTypes.Button,
+                    style: ButtonStyles.Primary,
+                    label: "Customize Embed",
+                    customID: `${panelID}.embed.edit`,
+                  },
+                  {
+                    type: ComponentTypes.Button,
+                    style: ButtonStyles.Success,
+                    label: "Add Button",
+                    customID: `${panelID}.button.add`,
+                  },
+                  {
+                    type: ComponentTypes.Button,
+                    style: ButtonStyles.Danger,
+                    label: "Remove Button",
+                    customID: `${panelID}.button.remove`,
+                  },
+                ],
+              },
+            ],
+            embeds: [
+              {
+                title: title !== undefined ? title : undefined,
+                description,
+                color,
+              },
+            ],
           },
-        }
-      );
+        });
+      } else if (category === "button") {
+        if (action === "add") {
+          const label = interaction.data.components[0].components.find(
+            (component) => component.customID.endsWith("label")
+          ).value;
+          const emoji = interaction.data.components[1].components.find(
+            (component) => component.customID.endsWith("emoji")
+          ).value;
+          let style = interaction.data.components[2].components.find(
+            (component) => component.customID.endsWith("style")
+          ).value;
 
-      client.createInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionCallbackType.DeferredUpdateMessage,
-      });
+          switch (style) {
+            case "Blurple":
+              {
+                style = ButtonStyles.Primary;
+              }
+              break;
+            case "Gray":
+              {
+                style = ButtonStyles.Secondary;
+              }
+              break;
+            case "Red":
+              {
+                style = ButtonStyles.Danger;
+              }
+              break;
+            case "Green":
+              {
+                style = ButtonStyles.Success;
+              }
+              break;
+          }
+
+          panelMessage.components[0].components.push({
+            label,
+            emoji:
+              emoji !== ""
+                ? {
+                    id: null,
+                    name: emoji,
+                  }
+                : undefined,
+            style,
+            customID: `open.${panelID}.${panelMessage.components[0].components.length}`,
+            type: ComponentTypes.Button,
+          });
+
+          client.editMessage(panelData.channelID, panelData.messageID, {
+            components: panelMessage.components,
+            embeds: panelMessage.embeds,
+          });
+
+          client.createInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionCallbackType.ChannelMessageWithSource,
+            data: {
+              components: [
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: panelMessage.components[0].components.map(
+                    (component, index) => ({
+                      ...component,
+                      customID: `${panelID}.button.edit.${index}`,
+                    })
+                  ),
+                },
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Primary,
+                      label: "Customize Embed",
+                      customID: `${panelID}.embed.edit`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Success,
+                      label: "Add Button",
+                      customID: `${panelID}.button.add`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Danger,
+                      label: "Remove Button",
+                      customID: `${panelID}.button.remove`,
+                    },
+                  ],
+                },
+              ],
+              embeds: panelMessage.embeds,
+            },
+          });
+        } else if (action === "edit") {
+          const i = customID.split(".")[3];
+
+          const label = interaction.data.components[0].components.find(
+            (component) => component.customID.endsWith("label")
+          ).value;
+          const emoji = interaction.data.components[1].components.find(
+            (component) => component.customID.endsWith("emoji")
+          ).value;
+          let style = interaction.data.components[2].components.find(
+            (component) => component.customID.endsWith("style")
+          ).value;
+
+          switch (style) {
+            case "Blurple":
+              {
+                style = ButtonStyles.Primary;
+              }
+              break;
+            case "Gray":
+              {
+                style = ButtonStyles.Secondary;
+              }
+              break;
+            case "Red":
+              {
+                style = ButtonStyles.Danger;
+              }
+              break;
+            case "Green":
+              {
+                style = ButtonStyles.Success;
+              }
+              break;
+          }
+
+          panelMessage.components[0].components[Number(i)] = {
+            customID: `open.${panelID}.${panelMessage.components[0].components.length}`,
+            type: ComponentTypes.Button,
+            label,
+            emoji:
+              emoji !== ""
+                ? {
+                    id: null,
+                    name: emoji,
+                  }
+                : undefined,
+            style,
+          };
+
+          client.editMessage(panelData.channelID, panelData.messageID, {
+            embeds: panelMessage.embeds,
+            components: panelMessage.components,
+          });
+
+          client.createInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionCallbackType.ChannelMessageWithSource,
+            data: {
+              components: [
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: panelMessage.components[0].components.map(
+                    (component, index) => ({
+                      ...component,
+                      customID: `${panelID}.button.edit.${index}`,
+                    })
+                  ),
+                },
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Primary,
+                      label: "Customize Embed",
+                      customID: `${panelID}.embed.edit`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Success,
+                      label: "Add Button",
+                      customID: `${panelID}.button.add`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Danger,
+                      label: "Remove Button",
+                      customID: `${panelID}.button.remove`,
+                    },
+                  ],
+                },
+              ],
+              embeds: panelMessage.embeds,
+            },
+          });
+        }
+      }
     }
   },
 };

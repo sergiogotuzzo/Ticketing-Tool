@@ -72,6 +72,19 @@ module.exports = {
         },
       ],
     },
+    {
+      name: "customize",
+      description: "Customize a panel.",
+      type: ApplicationCommandOptionType.SubCommand,
+      options: [
+        {
+          name: "id",
+          description: "The ID of the panel.",
+          type: ApplicationCommandOptionType.String,
+          required: true,
+        },
+      ],
+    },
   ],
   /**
    *
@@ -133,7 +146,7 @@ module.exports = {
                     type: ComponentTypes.Button,
                     label: "Open",
                     style: ButtonStyles.Primary,
-                    customID: `open.${panelID}`,
+                    customID: `open.${panelID}.0`,
                     emoji: {
                       id: null,
                       name: "📩",
@@ -293,7 +306,7 @@ module.exports = {
                   components: [
                     {
                       type: ComponentTypes.ChannelSelect,
-                      customID: `panel.${panelID}.ticketsParent.set`,
+                      customID: `${panelID}.tickets-parent.set`,
                       channelTypes: [ChannelTypes.GuildCategory],
                       placeholder: "Select the ticket's category",
                       defaultValues: panel.ticketsParentID
@@ -314,7 +327,7 @@ module.exports = {
                   components: [
                     {
                       type: ComponentTypes.RoleSelect,
-                      customID: `panel.${panelID}.ticketAccess.set`,
+                      customID: `${panelID}.ticket-access.set`,
                       placeholder: "Select the support roles",
                       defaultValues:
                         panel.ticketAccessIDs.length !== 0
@@ -330,6 +343,77 @@ module.exports = {
                 },
               ],
               flags: MessageFlags.Ephemeral,
+            },
+          });
+        }
+        break;
+      case "customize":
+        {
+          const panelID = subCommand.options.find(
+            (option) => option.name === "id"
+          ).value;
+
+          const panel = await Panel.findOne({
+            guildID: interaction.guildID,
+            panelID,
+          }).catch(console.error);
+
+          if (!panel)
+            return client.createInteractionResponse(
+              interaction.id,
+              interaction.token,
+              {
+                type: InteractionCallbackType.ChannelMessageWithSource,
+                data: {
+                  content: `No existing \`${panelID}\` panel.`,
+                  flags: MessageFlags.Ephemeral,
+                },
+              }
+            );
+
+          const panelMessage = await client.getMessage(
+            panel.channelID,
+            panel.messageID
+          );
+
+          client.createInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionCallbackType.ChannelMessageWithSource,
+            data: {
+              embeds: panelMessage.embeds,
+              components: [
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: panelMessage.components[0].components.map(
+                    (component, index) => ({
+                      ...component,
+                      customID: `${panelID}.button.edit.${index}`,
+                    })
+                  ),
+                },
+                {
+                  type: ComponentTypes.ActionRow,
+                  components: [
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Primary,
+                      label: "Customize Embed",
+                      customID: `${panelID}.embed.edit`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Success,
+                      label: "Add Button",
+                      customID: `${panelID}.button.add`,
+                    },
+                    {
+                      type: ComponentTypes.Button,
+                      style: ButtonStyles.Danger,
+                      label: "Remove Button",
+                      customID: `${panelID}.button.remove`,
+                    },
+                  ],
+                },
+              ],
             },
           });
         }
