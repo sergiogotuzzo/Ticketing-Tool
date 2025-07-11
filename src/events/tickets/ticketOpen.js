@@ -32,30 +32,6 @@ module.exports = {
       return;
     if (!interaction.data.customID.startsWith("open")) return;
 
-    const blacklistData = await Blacklist.findOne({
-      guildID: interaction.guildID,
-    }).catch(console.error);
-
-    if (!blacklistData) return;
-    if (
-      blacklistData.usersIDs.includes(interaction.member.user.id) ||
-      blacklistData.rolesIDs.some((blacklistRoleID) =>
-        interaction.member.roles.some((roleID) => roleID === blacklistRoleID)
-      )
-    )
-      return client.createInteractionResponse(
-        interaction.id,
-        interaction.token,
-        {
-          type: InteractionCallbackType.ChannelMessageWithSource,
-          data: {
-            content:
-              "You cannot open a ticket because you are in the blacklist.",
-            flags: MessageFlags.Ephemeral,
-          },
-        }
-      );
-
     const panelID = interaction.data.customID.split(".")[1];
 
     const panelData = await Panel.findOne({
@@ -81,6 +57,30 @@ module.exports = {
             content: `Ticket already opened at ${channelMention(
               ticketData.channelID
             )}.`,
+            flags: MessageFlags.Ephemeral,
+          },
+        }
+      );
+
+    const blacklistData = await Blacklist.findOne({
+      guildID: interaction.guildID,
+    }).catch(console.error);
+
+    if (
+      blacklistData &&
+      (blacklistData.usersIDs.includes(interaction.member.user.id) ||
+        blacklistData.rolesIDs.some((blacklistRoleID) =>
+          interaction.member.roles.some((roleID) => roleID === blacklistRoleID)
+        ))
+    )
+      return client.createInteractionResponse(
+        interaction.id,
+        interaction.token,
+        {
+          type: InteractionCallbackType.ChannelMessageWithSource,
+          data: {
+            content:
+              "You cannot open a ticket because you are in the blacklist.",
             flags: MessageFlags.Ephemeral,
           },
         }
