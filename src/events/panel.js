@@ -5,6 +5,7 @@ const {
   InteractionCallbackType,
   TextInputStyles,
   ButtonStyles,
+  MessageFlags,
 } = require("disgroove");
 const Panel = require("../models/Panel");
 
@@ -76,12 +77,12 @@ module.exports = {
           type: InteractionCallbackType.DeferredUpdateMessage,
         });
       } else if (interaction.data.componentType === ComponentTypes.Button) {
-        if (category === "embed" && action === "edit") {
-          const panelMessage = await client.getMessage(
-            panelData.channelID,
-            panelData.messageID
-          );
+        const panelMessage = await client.getMessage(
+          panelData.channelID,
+          panelData.messageID
+        );
 
+        if (category === "embed" && action === "edit") {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.Modal,
             data: {
@@ -144,6 +145,20 @@ module.exports = {
           });
         } else if (category === "button") {
           if (action === "add") {
+            if (panelMessage.components[0].components.length === 5)
+              return client.createInteractionResponse(
+                interaction.id,
+                interaction.token,
+                {
+                  type: InteractionCallbackType.ChannelMessageWithSource,
+                  data: {
+                    content:
+                      "You have reached the maximum limit of buttons (5)!",
+                    flags: MessageFlags.Ephemeral,
+                  },
+                }
+              );
+
             client.createInteractionResponse(
               interaction.id,
               interaction.token,
@@ -202,10 +217,18 @@ module.exports = {
               }
             );
           } else if (action === "remove") {
-            const panelMessage = await client.getMessage(
-              panelData.channelID,
-              panelData.messageID
-            );
+            if (panelMessage.components[0].components.length === 1)
+              return client.createInteractionResponse(
+                interaction.id,
+                interaction.token,
+                {
+                  type: InteractionCallbackType.ChannelMessageWithSource,
+                  data: {
+                    content: "You cannot remove more than 4 buttons.",
+                    flags: MessageFlags.Ephemeral,
+                  },
+                }
+              );
 
             const i = customID.split(".")[3];
 
@@ -543,12 +566,21 @@ module.exports = {
                   }
                 : undefined,
             style,
-            customID: `open.${panelID}.${panelMessage.components[0].components.length}`,
             type: ComponentTypes.Button,
           });
 
           client.editMessage(panelData.channelID, panelData.messageID, {
-            components: panelMessage.components,
+            components: [
+              {
+                type: ComponentTypes.ActionRow,
+                components: panelMessage.components[0].components.map(
+                  (component, index) => ({
+                    ...component,
+                    customID: `open.${panelID}.${index}`,
+                  })
+                ),
+              },
+            ],
             embeds: panelMessage.embeds,
           });
 
@@ -629,7 +661,6 @@ module.exports = {
           }
 
           panelMessage.components[0].components[Number(i)] = {
-            customID: `open.${panelID}.${panelMessage.components[0].components.length}`,
             type: ComponentTypes.Button,
             label,
             emoji:
@@ -644,7 +675,17 @@ module.exports = {
 
           client.editMessage(panelData.channelID, panelData.messageID, {
             embeds: panelMessage.embeds,
-            components: panelMessage.components,
+            components: [
+              {
+                type: ComponentTypes.ActionRow,
+                components: panelMessage.components[0].components.map(
+                  (component, index) => ({
+                    ...component,
+                    customID: `open.${panelID}.${index}`,
+                  })
+                ),
+              },
+            ],
           });
 
           client.createInteractionResponse(interaction.id, interaction.token, {
