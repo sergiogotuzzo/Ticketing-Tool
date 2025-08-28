@@ -90,55 +90,49 @@ module.exports = {
               title: `Customize \`${panelID}\` Embed`,
               components: [
                 {
-                  type: ComponentTypes.ActionRow,
-                  components: [
-                    {
-                      type: ComponentTypes.TextInput,
-                      customID: `${panelID}.embed.edit.title`,
-                      style: TextInputStyles.Paragraph,
-                      label: "Title",
-                      minLength: 0,
-                      maxLength: 256,
-                      required: false,
-                      value:
-                        panelMessage.embeds[0].title !== undefined
-                          ? panelMessage.embeds[0].title
-                          : undefined,
-                      placeholder: "Support",
-                    },
-                  ],
+                  type: ComponentTypes.Label,
+                  label: "Title",
+                  component: {
+                    type: ComponentTypes.TextInput,
+                    customID: `${panelID}.embed.edit.title`,
+                    style: TextInputStyles.Paragraph,
+                    minLength: 0,
+                    maxLength: 256,
+                    required: false,
+                    value:
+                      panelMessage.embeds[0].title !== undefined
+                        ? panelMessage.embeds[0].title
+                        : undefined,
+                    placeholder: "Support",
+                  },
                 },
                 {
-                  type: ComponentTypes.ActionRow,
-                  components: [
-                    {
-                      type: ComponentTypes.TextInput,
-                      customID: `${panelID}.embed.edit.description`,
-                      style: TextInputStyles.Paragraph,
-                      label: "Description",
-                      minLength: 1,
-                      maxLength: 4000,
-                      required: true,
-                      value: panelMessage.embeds[0].description,
-                      placeholder: 'Click "Open" to create a ticket.',
-                    },
-                  ],
+                  type: ComponentTypes.Label,
+                  label: "Description",
+                  component: {
+                    type: ComponentTypes.TextInput,
+                    customID: `${panelID}.embed.edit.description`,
+                    style: TextInputStyles.Paragraph,
+                    minLength: 1,
+                    maxLength: 4000,
+                    required: true,
+                    value: panelMessage.embeds[0].description,
+                    placeholder: 'Click "Open" to create a ticket.',
+                  },
                 },
                 {
-                  type: ComponentTypes.ActionRow,
-                  components: [
-                    {
-                      type: ComponentTypes.TextInput,
-                      customID: `${panelID}.embed.edit.color`,
-                      style: TextInputStyles.Short,
-                      label: "Color",
-                      minLength: 1,
-                      maxLength: 10,
-                      required: true,
-                      value: panelMessage.embeds[0].color,
-                      placeholder: "5793266",
-                    },
-                  ],
+                  type: ComponentTypes.Label,
+                  label: "Color",
+                  component: {
+                    type: ComponentTypes.TextInput,
+                    customID: `${panelID}.embed.edit.color`,
+                    style: TextInputStyles.Short,
+                    minLength: 1,
+                    maxLength: 10,
+                    required: true,
+                    value: panelMessage.embeds[0].color,
+                    placeholder: "5793266",
+                  },
                 },
               ],
             },
@@ -169,48 +163,42 @@ module.exports = {
                   title: `Add Button To \`${panelID}\``,
                   components: [
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.add.label`,
-                          style: TextInputStyles.Short,
-                          label: "Label",
-                          minLength: 0,
-                          maxLength: 80,
-                          required: true,
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Label",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.add.label`,
+                        style: TextInputStyles.Short,
+                        minLength: 0,
+                        maxLength: 80,
+                        required: true,
+                      },
                     },
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.add.emoji`,
-                          style: TextInputStyles.Short,
-                          label: "Emoji",
-                          minLength: 1,
-                          maxLength: 1,
-                          required: false,
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Emoji",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.add.emoji`,
+                        style: TextInputStyles.Short,
+                        minLength: 1,
+                        maxLength: 1,
+                        required: false,
+                      },
                     },
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.add.style`,
-                          style: TextInputStyles.Short,
-                          label: "Style",
-                          minLength: 1,
-                          maxLength: 7,
-                          required: true,
-                          value: "Blurple",
-                          placeholder: "Blurple, Gray, Red or Green",
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Style",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.add.style`,
+                        style: TextInputStyles.Short,
+                        minLength: 1,
+                        maxLength: 7,
+                        required: true,
+                        value: "Blurple",
+                        placeholder: "Blurple, Gray, Red or Green",
+                      },
                     },
                   ],
                 },
@@ -387,58 +375,52 @@ module.exports = {
                   title: `Add Button To \`${panelID}\``,
                   components: [
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.edit.${index}.label`,
-                          style: TextInputStyles.Short,
-                          label: "Label",
-                          minLength: 0,
-                          maxLength: 80,
-                          value:
-                            panelMessage.components[0].components[Number(index)]
-                              .label,
-                          required: true,
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Label",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.edit.${index}.label`,
+                        style: TextInputStyles.Short,
+                        minLength: 0,
+                        maxLength: 80,
+                        value:
+                          panelMessage.components[0].components[Number(index)]
+                            .label,
+                        required: true,
+                      },
                     },
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.edit.${index}.emoji`,
-                          style: TextInputStyles.Short,
-                          label: "Emoji",
-                          minLength: 1,
-                          maxLength: 3,
-                          value:
-                            panelMessage.components[0].components[Number(index)]
-                              .emoji?.name !== undefined
-                              ? panelMessage.components[0].components[
-                                  Number(index)
-                                ].emoji.name
-                              : undefined,
-                          required: false,
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Emoji",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.edit.${index}.emoji`,
+                        style: TextInputStyles.Short,
+                        minLength: 1,
+                        maxLength: 3,
+                        value:
+                          panelMessage.components[0].components[Number(index)]
+                            .emoji?.name !== undefined
+                            ? panelMessage.components[0].components[
+                                Number(index)
+                              ].emoji.name
+                            : undefined,
+                        required: false,
+                      },
                     },
                     {
-                      type: ComponentTypes.ActionRow,
-                      components: [
-                        {
-                          type: ComponentTypes.TextInput,
-                          customID: `${panelID}.button.edit.${index}.style`,
-                          style: TextInputStyles.Short,
-                          label: "Style",
-                          minLength: 1,
-                          maxLength: 7,
-                          required: true,
-                          value: style,
-                          placeholder: "Blurple, Gray, Red or Green",
-                        },
-                      ],
+                      type: ComponentTypes.Label,
+                      label: "Style",
+                      component: {
+                        type: ComponentTypes.TextInput,
+                        customID: `${panelID}.button.edit.${index}.style`,
+                        style: TextInputStyles.Short,
+                        minLength: 1,
+                        maxLength: 7,
+                        required: true,
+                        value: style,
+                        placeholder: "Blurple, Gray, Red or Green",
+                      },
                     },
                   ],
                 },
