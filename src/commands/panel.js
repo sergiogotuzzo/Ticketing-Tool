@@ -379,6 +379,7 @@ module.exports = {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
+              flags: MessageFlags.Ephemeral,
               embeds: panelMessage.embeds,
               components: [
                 {

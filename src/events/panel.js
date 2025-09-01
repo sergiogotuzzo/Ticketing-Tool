@@ -244,6 +244,7 @@ module.exports = {
                 {
                   type: InteractionCallbackType.ChannelMessageWithSource,
                   data: {
+                    flags: MessageFlags.Ephemeral,
                     components: [
                       {
                         type: ComponentTypes.ActionRow,
@@ -289,6 +290,7 @@ module.exports = {
                 {
                   type: InteractionCallbackType.ChannelMessageWithSource,
                   data: {
+                    flags: MessageFlags.Ephemeral,
                     embeds: panelMessage.embeds,
                     components: [
                       {
@@ -460,6 +462,7 @@ module.exports = {
         client.createInteractionResponse(interaction.id, interaction.token, {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
+            flags: MessageFlags.Ephemeral,
             components: [
               {
                 type: ComponentTypes.ActionRow,
@@ -569,6 +572,7 @@ module.exports = {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
+              flags: MessageFlags.Ephemeral,
               components: [
                 {
                   type: ComponentTypes.ActionRow,
@@ -673,6 +677,7 @@ module.exports = {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
+              flags: MessageFlags.Ephemeral,
               components: [
                 {
                   type: ComponentTypes.ActionRow,
