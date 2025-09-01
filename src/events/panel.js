@@ -190,14 +190,41 @@ module.exports = {
                       type: ComponentTypes.Label,
                       label: "Style",
                       component: {
-                        type: ComponentTypes.TextInput,
+                        type: ComponentTypes.StringSelect,
                         customID: `${panelID}.button.add.style`,
-                        style: TextInputStyles.Short,
-                        minLength: 1,
-                        maxLength: 7,
-                        required: true,
-                        value: "Blurple",
-                        placeholder: "Blurple, Gray, Red or Green",
+                        options: [
+                          {
+                            label: "Blurple",
+                            value: "blurple",
+                            emoji: {
+                              name: "🔵",
+                            },
+                            default: true,
+                          },
+                          {
+                            label: "Gray",
+                            value: "gray",
+                            emoji: {
+                              name: "⚫",
+                            },
+                          },
+                          {
+                            label: "Green",
+                            value: "green",
+                            emoji: {
+                              name: "🟢",
+                            },
+                          },
+                          {
+                            label: "Red",
+                            value: "red",
+                            emoji: {
+                              name: "🔴",
+                            },
+                          },
+                        ],
+                        minValues: 1,
+                        maxValues: 1,
                       },
                     },
                   ],
@@ -341,32 +368,6 @@ module.exports = {
               panelData.messageID
             );
 
-            let style =
-              panelMessage.components[0].components[Number(index)].style;
-
-            switch (style) {
-              case ButtonStyles.Primary:
-                {
-                  style = "Blurple";
-                }
-                break;
-              case ButtonStyles.Secondary:
-                {
-                  style = "Gray";
-                }
-                break;
-              case ButtonStyles.Danger:
-                {
-                  style = "Red";
-                }
-                break;
-              case ButtonStyles.Success:
-                {
-                  style = "Green";
-                }
-                break;
-            }
-
             client.createInteractionResponse(
               interaction.id,
               interaction.token,
@@ -414,14 +415,56 @@ module.exports = {
                       type: ComponentTypes.Label,
                       label: "Style",
                       component: {
-                        type: ComponentTypes.TextInput,
+                        type: ComponentTypes.StringSelect,
                         customID: `${panelID}.button.edit.${index}.style`,
-                        style: TextInputStyles.Short,
-                        minLength: 1,
-                        maxLength: 7,
-                        required: true,
-                        value: style,
-                        placeholder: "Blurple, Gray, Red or Green",
+                        options: [
+                          {
+                            label: "Blurple",
+                            value: "blurple",
+                            emoji: {
+                              name: "🔵",
+                            },
+                            default:
+                              panelMessage.components[0].components[
+                                Number(index)
+                              ].style === ButtonStyles.Primary,
+                          },
+                          {
+                            label: "Gray",
+                            value: "gray",
+                            emoji: {
+                              name: "⚫",
+                            },
+                            default:
+                              panelMessage.components[0].components[
+                                Number(index)
+                              ].style === ButtonStyles.Secondary,
+                          },
+                          {
+                            label: "Green",
+                            value: "green",
+                            emoji: {
+                              name: "🟢",
+                            },
+                            default:
+                              panelMessage.components[0].components[
+                                Number(index)
+                              ].style === ButtonStyles.Success,
+                          },
+                          {
+                            label: "Red",
+                            value: "red",
+                            emoji: {
+                              name: "🔴",
+                            },
+                            default:
+                              panelMessage.components[0].components[
+                                Number(index)
+                              ].style === ButtonStyles.Danger,
+                          },
+                        ],
+                        minValues: 1,
+                        maxValues: 1,
                       },
                     },
                   ],
@@ -438,15 +481,9 @@ module.exports = {
       );
 
       if (category === "embed" && action === "edit") {
-        const title = interaction.data.components[0].components.find(
-          (component) => component.customID.endsWith("title")
-        ).value;
-        const description = interaction.data.components[1].components.find(
-          (component) => component.customID.endsWith("description")
-        ).value;
-        const color = interaction.data.components[2].components.find(
-          (component) => component.customID.endsWith("color")
-        ).value;
+        const title = interaction.data.components[0].component.value;
+        const description = interaction.data.components[1].component.value;
+        const color = interaction.data.components[2].component.value;
 
         client.editMessage(panelData.channelID, panelData.messageID, {
           components: panelMessage.components,
@@ -508,36 +545,22 @@ module.exports = {
         });
       } else if (category === "button") {
         if (action === "add") {
-          const label = interaction.data.components[0].components.find(
-            (component) => component.customID.endsWith("label")
-          ).value;
-          const emoji = interaction.data.components[1].components.find(
-            (component) => component.customID.endsWith("emoji")
-          ).value;
-          let style = interaction.data.components[2].components.find(
-            (component) => component.customID.endsWith("style")
-          ).value;
+          const label = interaction.data.components[0].component.value;
+          const emoji = interaction.data.components[1].component.value;
+          let style = interaction.data.components[2].component.values[0];
 
           switch (style) {
-            case "Blurple":
-              {
-                style = ButtonStyles.Primary;
-              }
+            case "blurple":
+              style = ButtonStyles.Primary;
               break;
-            case "Gray":
-              {
-                style = ButtonStyles.Secondary;
-              }
+            case "gray":
+              style = ButtonStyles.Secondary;
               break;
-            case "Red":
-              {
-                style = ButtonStyles.Danger;
-              }
+            case "red":
+              style = ButtonStyles.Danger;
               break;
-            case "Green":
-              {
-                style = ButtonStyles.Success;
-              }
+            case "green":
+              style = ButtonStyles.Success;
               break;
           }
 
@@ -613,36 +636,22 @@ module.exports = {
         } else if (action === "edit") {
           const i = customID.split(".")[3];
 
-          const label = interaction.data.components[0].components.find(
-            (component) => component.customID.endsWith("label")
-          ).value;
-          const emoji = interaction.data.components[1].components.find(
-            (component) => component.customID.endsWith("emoji")
-          ).value;
-          let style = interaction.data.components[2].components.find(
-            (component) => component.customID.endsWith("style")
-          ).value;
+          const label = interaction.data.components[0].component.value;
+          const emoji = interaction.data.components[1].component.value;
+          let style = interaction.data.components[2].component.values[0];
 
           switch (style) {
-            case "Blurple":
-              {
-                style = ButtonStyles.Primary;
-              }
+            case "blurple":
+              style = ButtonStyles.Primary;
               break;
-            case "Gray":
-              {
-                style = ButtonStyles.Secondary;
-              }
+            case "gray":
+              style = ButtonStyles.Secondary;
               break;
-            case "Red":
-              {
-                style = ButtonStyles.Danger;
-              }
+            case "red":
+              style = ButtonStyles.Danger;
               break;
-            case "Green":
-              {
-                style = ButtonStyles.Success;
-              }
+            case "green":
+              style = ButtonStyles.Success;
               break;
           }
 
