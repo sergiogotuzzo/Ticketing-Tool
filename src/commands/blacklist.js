@@ -34,9 +34,10 @@ module.exports = {
         flags: MessageFlags.Ephemeral,
         embeds: [
           {
+            color: 0,
             title: "Blacklist",
             description:
-              "The blacklist is a list containing the users and roles that will not have access to the ticketing system.\nAll users and roles within it will not be able to create tickets, manage panels, etc.\n\nYou can choose the users and roles to be blacklisted via the drop-down menus below with a limit of a maximum of 25 users and 25 roles.",
+              "The blacklist is a list containing users and roles that will not have any access to the ticketing system. All users and roles will not be able to create tickets, manage panels, etc. You can add up to a maximum of 25 users and 25 roles.\n\nYou can select them from the menus below.",
           },
         ],
         components: [

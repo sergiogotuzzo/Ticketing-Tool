@@ -311,7 +311,7 @@ module.exports = {
                   color: 11184810,
                   title: `\`${panelID}\` management`,
                   description:
-                    "The ticket category is the category in which all tickets will be created.\nThe support roles are the roles that will have immediate access to each ticket.\n\nBoth can be chosen via the drop-down menus below.",
+                    "The ticket category is the category where all open tickets (from this panel) will be created. It can help if you want to manage tickets in an orderly and clean manner.\n\nSupport roles are roles that will have immediate access to all open tickets (from this panel). It is recommended to include trusted roles (such as moderators and administrators). You can choose up to 5.\n\nYou can choose both from the menus below.",
                 },
               ],
               components: [
@@ -322,7 +322,7 @@ module.exports = {
                       type: ComponentTypes.ChannelSelect,
                       customID: `${panelID}.tickets-parent.set`,
                       channelTypes: [ChannelTypes.GuildCategory],
-                      placeholder: "Select the ticket's category",
+                      placeholder: "Select the ticket category",
                       defaultValues: panel.ticketsParentID
                         ? [
                             {
