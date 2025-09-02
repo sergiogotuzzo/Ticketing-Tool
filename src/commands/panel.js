@@ -295,6 +295,7 @@ module.exports = {
             data: {
               embeds: [
                 {
+                  color: 11184810,
                   title: `\`${panelID}\` management`,
                   description:
                     "The ticket category is the category in which all tickets will be created.\nThe support roles are the roles that will have immediate access to each ticket.\n\nBoth can be chosen via the drop-down menus below.",
