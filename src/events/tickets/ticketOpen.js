@@ -10,6 +10,7 @@ const {
   ButtonStyles,
   unixTimestamp,
   TimestampStyles,
+  userMention,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { sendLogMessage } = require("../../util/logging");
@@ -200,5 +201,14 @@ module.exports = {
       ticketName: ticketChannel.name,
       ownerID: interaction.member.user.id,
     });
+
+    const mentionMessage = await client.createMessage(ticketChannel.id, {
+      content: `${userMention(interaction.member.user.id)}`,
+    });
+
+    setTimeout(
+      () => client.deleteMessage(mentionMessage.channelID, mentionMessage.id),
+      0
+    );
   },
 };
