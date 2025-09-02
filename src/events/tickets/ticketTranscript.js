@@ -3,6 +3,7 @@ const {
   InteractionType,
   ComponentTypes,
   InteractionCallbackType,
+  MessageFlags,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { getTranscriptMessage } = require("../../util/transcript");
@@ -42,6 +43,7 @@ module.exports = {
     client.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.ChannelMessageWithSource,
       data: {
+        flags: MessageFlags.Ephemeral,
         files: [transcriptFile],
       },
     });
