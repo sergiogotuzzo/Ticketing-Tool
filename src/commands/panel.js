@@ -411,7 +411,7 @@ module.exports = {
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Primary,
-                      label: "Customize Embed",
+                      label: "Edit Embed",
                       customID: `${panelID}.embed.edit`,
                     },
                     {
