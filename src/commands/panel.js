@@ -111,6 +111,19 @@ module.exports = {
             ? subCommand.options.find((option) => option.name === "id").value
             : Math.random().toString(16).slice(2);
 
+          if (panelID.length > 93)
+            return client.createInteractionResponse(
+              interaction.id,
+              interaction.token,
+              {
+                type: InteractionCallbackType.ChannelMessageWithSource,
+                data: {
+                  content: "The panel ID you entered is too long!",
+                  flags: MessageFlags.Ephemeral,
+                },
+              }
+            );
+
           const panel = await Panel.findOne({
             guildID: interaction.guildID,
             channelID: interaction.channelID,
