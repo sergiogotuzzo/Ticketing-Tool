@@ -182,7 +182,7 @@ module.exports = {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
-              content: `Panel \`${panelID}\` successfully created at https://discord.com/channels/${interaction.guildID}/${interaction.channelID}/${message.id}.`,
+              content: `Panel \`${panelID}\` successfully created at https://discord.com/channels/${interaction.guildID}/${channelID}/${message.id}.`,
               flags: MessageFlags.Ephemeral,
             },
           });
