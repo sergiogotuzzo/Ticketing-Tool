@@ -126,7 +126,7 @@ module.exports = {
 
           const panel = await Panel.findOne({
             guildID: interaction.guildID,
-            channelID: interaction.channelID,
+            channelID,
             panelID,
           }).catch(console.error);
 
