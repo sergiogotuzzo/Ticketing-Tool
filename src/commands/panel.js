@@ -111,6 +111,8 @@ module.exports = {
             ? subCommand.options.find((option) => option.name === "id").value
             : Math.random().toString(16).slice(2);
 
+          console.log(channelID);
+
           if (panelID.length > 93)
             return client.createInteractionResponse(
               interaction.id,
@@ -172,7 +174,7 @@ module.exports = {
 
           Panel.create({
             guildID: interaction.guildID,
-            channelID: interaction.channelID,
+            channelID,
             messageID: message.id,
             panelID,
           });
