@@ -148,8 +148,8 @@ module.exports = {
           const message = await client.createMessage(channelID, {
             embeds: [
               {
-                title: "Support",
-                description: 'Click "Open" to create a ticket.',
+                title: "Open a ticket",
+                description: "Click the button below to open a ticket",
                 color: 5793266,
               },
             ],
