@@ -19,12 +19,12 @@ async function sendLogMessage(client, guildID, action, data) {
 
   let embed = {
     title: "",
-    description: `**Ticket owner**: ${userMention(data.ownerID)}`,
+    description: `**Owner**: ${userMention(data.ownerID)}`,
     timestamp: new Date().toISOString(),
   };
 
   if (data.guiltyID)
-    embed.description += `\n**Staffer**: ${userMention(data.guiltyID)}`;
+    embed.description += `\n**By**: ${userMention(data.guiltyID)}`;
   if (data.victimID)
     embed.description += `\n**User**: ${userMention(data.victimID)}`;
 
