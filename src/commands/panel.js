@@ -28,7 +28,7 @@ module.exports = {
         },
         {
           name: "id",
-          description: "The ID of the panel.",
+          description: "The Id of the panel.",
           type: ApplicationCommandOptionType.String,
         },
       ],
@@ -40,7 +40,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The ID of the panel.",
+          description: "The Id of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -48,7 +48,7 @@ module.exports = {
     },
     {
       name: "id",
-      description: "Get the ID of a panel.",
+      description: "Get the Id of a panel.",
       type: ApplicationCommandOptionType.SubCommand,
       options: [
         {
@@ -66,7 +66,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The ID of the panel.",
+          description: "The Id of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -79,7 +79,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The ID of the panel.",
+          description: "The Id of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -99,37 +99,37 @@ module.exports = {
     switch (subCommand.name) {
       case "create":
         {
-          const channelID = subCommand.options.find(
+          const channelId = subCommand.options.find(
             (option) => option.name === "channel"
           )
             ? subCommand.options.find((option) => option.name === "channel")
                 .value
-            : interaction.channelID;
-          const panelID = subCommand.options.find(
+            : interaction.channelId;
+          const panelId = subCommand.options.find(
             (option) => option.name === "id"
           )
             ? subCommand.options.find((option) => option.name === "id").value
             : Math.random().toString(16).slice(2);
 
-          console.log(channelID);
+          console.log(channelId);
 
-          if (panelID.length > 93)
+          if (panelId.length > 93)
             return client.createInteractionResponse(
               interaction.id,
               interaction.token,
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: "The panel ID you entered is too long!",
+                  content: "The panel Id you entered is too long!",
                   flags: MessageFlags.Ephemeral,
                 },
               }
             );
 
           const panel = await Panel.findOne({
-            guildID: interaction.guildID,
-            channelID,
-            panelID,
+            guildId: interaction.guildId,
+            channelId,
+            panelId,
           }).catch(console.error);
 
           if (panel)
@@ -139,13 +139,13 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `Panel \`${panelID}\` already existing at https://discord.com/channels/${interaction.guildID}/${interaction.channelID}/${panel.messageID}.`,
+                  content: `Panel \`${panelId}\` already existing at https://discord.com/channels/${interaction.guildId}/${interaction.channelId}/${panel.messageId}.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
             );
 
-          const message = await client.createMessage(channelID, {
+          const message = await client.createMessage(channelId, {
             embeds: [
               {
                 title: "Open a ticket",
@@ -161,7 +161,7 @@ module.exports = {
                     type: ComponentTypes.Button,
                     label: "Open",
                     style: ButtonStyles.Primary,
-                    customID: `open.${panelID}.0`,
+                    customId: `open.${panelId}.0`,
                     emoji: {
                       id: null,
                       name: "📩",
@@ -173,16 +173,16 @@ module.exports = {
           });
 
           Panel.create({
-            guildID: interaction.guildID,
-            channelID,
-            messageID: message.id,
-            panelID,
+            guildId: interaction.guildId,
+            channelId,
+            messageId: message.id,
+            panelId,
           });
 
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
-              content: `Panel \`${panelID}\` successfully created at https://discord.com/channels/${interaction.guildID}/${channelID}/${message.id}.`,
+              content: `Panel \`${panelId}\` successfully created at https://discord.com/channels/${interaction.guildId}/${channelId}/${message.id}.`,
               flags: MessageFlags.Ephemeral,
             },
           });
@@ -190,13 +190,13 @@ module.exports = {
         break;
       case "delete":
         {
-          const panelID = subCommand.options.find(
+          const panelId = subCommand.options.find(
             (option) => option.name === "id"
           ).value;
 
           const panel = await Panel.findOne({
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           }).catch(console.error);
 
           if (!panel)
@@ -206,23 +206,23 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `No existing \`${panelID}\` panel.`,
+                  content: `No existing \`${panelId}\` panel.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
             );
 
-          client.deleteMessage(panel.channelID, panel.messageID);
+          client.deleteMessage(panel.channelId, panel.messageId);
 
           await Panel.findOneAndDelete({
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           });
 
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.ChannelMessageWithSource,
             data: {
-              content: `Panel \`${panelID}\` successfully deleted.`,
+              content: `Panel \`${panelId}\` successfully deleted.`,
               flags: MessageFlags.Ephemeral,
             },
           });
@@ -235,11 +235,11 @@ module.exports = {
           ).value;
 
           try {
-            const messageID = new URL(link).pathname.split("/")[4];
+            const messageId = new URL(link).pathname.split("/")[4];
 
             const panel = await Panel.findOne({
-              guildID: interaction.guildID,
-              messageID,
+              guildId: interaction.guildId,
+              messageId,
             }).catch(console.error);
 
             if (!panel)
@@ -261,7 +261,7 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `The ID of ${link} is \`${panel.panelID}\`.`,
+                  content: `The Id of ${link} is \`${panel.panelId}\`.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
@@ -283,13 +283,13 @@ module.exports = {
         break;
       case "manage":
         {
-          const panelID = subCommand.options.find(
+          const panelId = subCommand.options.find(
             (option) => option.name === "id"
           ).value;
 
           const panel = await Panel.findOne({
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           }).catch(console.error);
 
           if (!panel)
@@ -299,7 +299,7 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `No existing \`${panelID}\` panel.`,
+                  content: `No existing \`${panelId}\` panel.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
@@ -311,7 +311,7 @@ module.exports = {
               embeds: [
                 {
                   color: 11184810,
-                  title: `\`${panelID}\` management`,
+                  title: `\`${panelId}\` management`,
                   description:
                     "The ticket category is the category where all open tickets (from this panel) will be created. It can help if you want to manage tickets in an orderly and clean manner.\n\nSupport roles are roles that will have immediate access to all open tickets (from this panel). It is recommended to include trusted roles (such as moderators and administrators). You can choose up to 5.\n\nYou can choose both from the menus below.",
                 },
@@ -322,13 +322,13 @@ module.exports = {
                   components: [
                     {
                       type: ComponentTypes.ChannelSelect,
-                      customID: `${panelID}.tickets-parent.set`,
+                      customId: `${panelId}.tickets-parent.set`,
                       channelTypes: [ChannelTypes.GuildCategory],
                       placeholder: "Select the ticket category",
-                      defaultValues: panel.ticketsParentID
+                      defaultValues: panel.ticketsParentId
                         ? [
                             {
-                              id: panel.ticketsParentID,
+                              id: panel.ticketsParentId,
                               type: "channel",
                             },
                           ]
@@ -343,12 +343,12 @@ module.exports = {
                   components: [
                     {
                       type: ComponentTypes.RoleSelect,
-                      customID: `${panelID}.ticket-access.set`,
+                      customId: `${panelId}.ticket-access.set`,
                       placeholder: "Select the support roles",
                       defaultValues:
-                        panel.ticketAccessIDs.length !== 0
-                          ? panel.ticketAccessIDs.map((ticketAccessID) => ({
-                              id: ticketAccessID,
+                        panel.ticketAccessIds.length !== 0
+                          ? panel.ticketAccessIds.map((ticketAccessId) => ({
+                              id: ticketAccessId,
                               type: "role",
                             }))
                           : undefined,
@@ -365,13 +365,13 @@ module.exports = {
         break;
       case "customize":
         {
-          const panelID = subCommand.options.find(
+          const panelId = subCommand.options.find(
             (option) => option.name === "id"
           ).value;
 
           const panel = await Panel.findOne({
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           }).catch(console.error);
 
           if (!panel)
@@ -381,15 +381,15 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `No existing \`${panelID}\` panel.`,
+                  content: `No existing \`${panelId}\` panel.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
             );
 
           const panelMessage = await client.getMessage(
-            panel.channelID,
-            panel.messageID
+            panel.channelId,
+            panel.messageId
           );
 
           client.createInteractionResponse(interaction.id, interaction.token, {
@@ -403,7 +403,7 @@ module.exports = {
                   components: panelMessage.components[0].components.map(
                     (component, index) => ({
                       ...component,
-                      customID: `${panelID}.button.edit.${index}`,
+                      customId: `${panelId}.button.edit.${index}`,
                     })
                   ),
                 },
@@ -414,19 +414,19 @@ module.exports = {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Primary,
                       label: "Edit Embed",
-                      customID: `${panelID}.embed.edit`,
+                      customId: `${panelId}.embed.edit`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Success,
                       label: "Add Button",
-                      customID: `${panelID}.button.add`,
+                      customId: `${panelId}.button.add`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Danger,
                       label: "Remove Button",
-                      customID: `${panelID}.button.remove`,
+                      customId: `${panelId}.button.remove`,
                     },
                   ],
                 },

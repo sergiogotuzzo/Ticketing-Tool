@@ -6,20 +6,20 @@ const { Client } = require("disgroove");
  * @param {import("disgroove").Channel} channel
  * @returns
  */
-async function getAllMessages(client, channelID) {
+async function getAllMessages(client, channelId) {
   let allMessages = [];
-  let lastMessageID;
+  let lastMessageId;
 
   while (true) {
     const options = { limit: 100 };
 
-    if (lastMessageID) options.before = lastMessageID;
+    if (lastMessageId) options.before = lastMessageId;
 
-    let messages = await client.getMessages(channelID, options);
+    let messages = await client.getMessages(channelId, options);
 
     allMessages = allMessages.concat(Array.from(messages.values()));
 
-    lastMessageID = messages.reverse()[0].id;
+    lastMessageId = messages.reverse()[0].id;
 
     if (messages.length != 100) break;
   }
@@ -35,7 +35,7 @@ async function getAllMessages(client, channelID) {
 async function getTranscriptMessage(client, interaction) {
   let transcriptMessage = `#${interaction.channel.name}\n\n`;
 
-  const messages = await getAllMessages(client, interaction.channelID);
+  const messages = await getAllMessages(client, interaction.channelId);
 
   messages.reverse().forEach(
     /**

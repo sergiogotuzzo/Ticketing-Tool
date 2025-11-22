@@ -35,16 +35,16 @@ module.exports = {
    * @param {import("disgroove").Interaction} interaction
    */
   run: async (client, interaction) => {
-    const channelID = interaction.data.options.find(
+    const channelId = interaction.data.options.find(
       (option) => option.name === "ticket"
     )
       ? interaction.data.options.find((option) => option.name === "ticket")
           .value
-      : interaction.channelID;
+      : interaction.channelId;
 
     const ticketData = await Ticket.findOne({
-      guildID: interaction.guildID,
-      channelID,
+      guildId: interaction.guildId,
+      channelId,
     }).catch(console.error);
 
     if (!ticketData)
@@ -54,20 +54,20 @@ module.exports = {
         {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
-            content: `${channelMention(channelID)} is not a ticket.`,
+            content: `${channelMention(channelId)} is not a ticket.`,
             flags: MessageFlags.Ephemeral,
           },
         }
       );
 
-    const userID = interaction.data.options.find(
+    const userId = interaction.data.options.find(
       (option) => option.name === "user"
     ).value;
 
-    const channel = await client.getChannel(interaction.channelID);
+    const channel = await client.getChannel(interaction.channelId);
 
     const permissionOverwrite = channel.permissionOverwrites.find(
-      (permissionOverwrite) => permissionOverwrite.id === userID
+      (permissionOverwrite) => permissionOverwrite.id === userId
     );
 
     if (
@@ -83,13 +83,13 @@ module.exports = {
         {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
-            content: `${userMention(userID)} is already in the ticket.`,
+            content: `${userMention(userId)} is already in the ticket.`,
             flags: MessageFlags.Ephemeral,
           },
         }
       );
 
-    client.editChannelPermissions(channelID, userID, {
+    client.editChannelPermissions(channelId, userId, {
       allow: String(
         BitwisePermissionFlags.ViewChannel +
           BitwisePermissionFlags.SendMessages +
@@ -101,20 +101,20 @@ module.exports = {
     client.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.ChannelMessageWithSource,
       data: {
-        content: `Added ${userMention(userID)} to ${channelMention(
-          channelID
+        content: `Added ${userMention(userId)} to ${channelMention(
+          channelId
         )}.`,
         flags: MessageFlags.Ephemeral,
       },
     });
 
-    const ticketChannel = await client.getChannel(channelID);
+    const ticketChannel = await client.getChannel(channelId);
 
-    sendLogMessage(client, interaction.guildID, "ADD", {
+    sendLogMessage(client, interaction.guildId, "ADD", {
       ticketName: ticketChannel.name,
-      ownerID: ticketData.ownerID,
-      guiltyID: interaction.member.user.id,
-      victimID: userID,
+      ownerId: ticketData.ownerId,
+      guiltyId: interaction.member.user.id,
+      victimId: userId,
     });
   },
 };

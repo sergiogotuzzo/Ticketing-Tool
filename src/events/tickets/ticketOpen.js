@@ -31,21 +31,21 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-    if (!interaction.data.customID.startsWith("open")) return;
+    if (!interaction.data.customId.startsWith("open")) return;
 
-    const panelID = interaction.data.customID.split(".")[1];
+    const panelId = interaction.data.customId.split(".")[1];
 
     const panelData = await Panel.findOne({
-      guildID: interaction.guildID,
-      panelID,
+      guildId: interaction.guildId,
+      panelId,
     }).catch(console.error);
 
     if (!panelData) return;
 
     const ticketData = await Ticket.findOne({
-      guildID: interaction.guildID,
-      ownerID: interaction.member.user.id,
-      panelID,
+      guildId: interaction.guildId,
+      ownerId: interaction.member.user.id,
+      panelId,
     }).catch(console.error);
 
     if (ticketData)
@@ -56,7 +56,7 @@ module.exports = {
           type: InteractionCallbackType.ChannelMessageWithSource,
           data: {
             content: `Ticket already opened at ${channelMention(
-              ticketData.channelID
+              ticketData.channelId
             )}.`,
             flags: MessageFlags.Ephemeral,
           },
@@ -64,14 +64,14 @@ module.exports = {
       );
 
     const blacklistData = await Blacklist.findOne({
-      guildID: interaction.guildID,
+      guildId: interaction.guildId,
     }).catch(console.error);
 
     if (
       blacklistData &&
-      (blacklistData.usersIDs.includes(interaction.member.user.id) ||
-        blacklistData.rolesIDs.some((blacklistRoleID) =>
-          interaction.member.roles.some((roleID) => roleID === blacklistRoleID)
+      (blacklistData.usersIds.includes(interaction.member.user.id) ||
+        blacklistData.rolesIds.some((blacklistRoleId) =>
+          interaction.member.roles.some((roleId) => roleId === blacklistRoleId)
         ))
     )
       return client.createInteractionResponse(
@@ -107,16 +107,16 @@ module.exports = {
         type: 1,
       },
       {
-        id: interaction.guildID,
+        id: interaction.guildId,
         deny: String(BitwisePermissionFlags.ViewChannel),
         type: 0,
       },
     ];
 
-    if (panelData.ticketAccessIDs && panelData.ticketAccessIDs.length !== 0)
-      panelData.ticketAccessIDs.forEach((ticketAccessID) =>
+    if (panelData.ticketAccessIds && panelData.ticketAccessIds.length !== 0)
+      panelData.ticketAccessIds.forEach((ticketAccessId) =>
         permissionOverwrites.push({
-          id: ticketAccessID,
+          id: ticketAccessId,
           allow: String(
             BitwisePermissionFlags.ViewChannel +
               BitwisePermissionFlags.SendMessages +
@@ -127,7 +127,7 @@ module.exports = {
       );
 
     const ticketChannel = await client.createChannel(
-      interaction.guildID,
+      interaction.guildId,
       {
         name: `ticket-${interaction.member.user.username}`,
         type: ChannelTypes.GuildText,
@@ -138,7 +138,7 @@ module.exports = {
           TimestampStyles.RelativeTime
         )}`,
         permissionOverwrites,
-        parentID: panelData.ticketsParentID ?? undefined,
+        parentId: panelData.ticketsParentId ?? undefined,
       },
       `Ticket opened by @${interaction.member.user.username}.`
     );
@@ -167,7 +167,7 @@ module.exports = {
             {
               type: ComponentTypes.Button,
               style: ButtonStyles.Danger,
-              customID: "close",
+              customId: "close",
               emoji: {
                 id: null,
                 name: "⛔",
@@ -176,7 +176,7 @@ module.exports = {
             {
               type: ComponentTypes.Button,
               style: ButtonStyles.Secondary,
-              customID: "transcript",
+              customId: "transcript",
               emoji: {
                 id: null,
                 name: "📑",
@@ -190,16 +190,16 @@ module.exports = {
     client.pinMessage(ticketChannel.id, ticketMessage.id);
 
     Ticket.create({
-      guildID: interaction.guildID,
-      channelID: ticketChannel.id,
-      ownerID: interaction.member.user.id,
-      messageID: ticketMessage.id,
-      panelID,
+      guildId: interaction.guildId,
+      channelId: ticketChannel.id,
+      ownerId: interaction.member.user.id,
+      messageId: ticketMessage.id,
+      panelId,
     });
 
-    sendLogMessage(client, interaction.guildID, "OPEN", {
+    sendLogMessage(client, interaction.guildId, "OPEN", {
       ticketName: ticketChannel.name,
-      ownerID: interaction.member.user.id,
+      ownerId: interaction.member.user.id,
     });
 
     const mentionMessage = await client.createMessage(ticketChannel.id, {
@@ -207,7 +207,7 @@ module.exports = {
     });
 
     setTimeout(
-      () => client.deleteMessage(mentionMessage.channelID, mentionMessage.id),
+      () => client.deleteMessage(mentionMessage.channelId, mentionMessage.id),
       0
     );
   },

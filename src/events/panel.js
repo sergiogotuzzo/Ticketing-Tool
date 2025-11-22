@@ -18,22 +18,22 @@ module.exports = {
    * @returns
    */
   run: async (client, interaction) => {
-    const customID = interaction.data.customID;
+    const customId = interaction.data.customId;
 
-    if (!customID || customID.startsWith("open") || !customID.includes("."))
+    if (!customId || customId.startsWith("open") || !customId.includes("."))
       return;
 
-    const panelID = customID.split(".")[0]; // "ID.category.action"
+    const panelId = customId.split(".")[0]; // "Id.category.action"
 
     const panelData = await Panel.findOne({
-      guildID: interaction.guildID,
-      panelID,
+      guildId: interaction.guildId,
+      panelId,
     }).catch(console.error);
 
     if (!panelData) return;
 
-    const category = customID.split(".")[1];
-    const action = customID.split(".")[2];
+    const category = customId.split(".")[1];
+    const action = customId.split(".")[2];
 
     if (interaction.type === InteractionType.MessageComponent) {
       if (
@@ -43,12 +43,12 @@ module.exports = {
       ) {
         await Panel.findOneAndUpdate(
           {
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           },
           {
             $set: {
-              ticketsParentID: interaction.data.values[0],
+              ticketsParentId: interaction.data.values[0],
             },
           }
         );
@@ -63,12 +63,12 @@ module.exports = {
       ) {
         await Panel.findOneAndUpdate(
           {
-            guildID: interaction.guildID,
-            panelID,
+            guildId: interaction.guildId,
+            panelId,
           },
           {
             $set: {
-              ticketAccessIDs: interaction.data.values,
+              ticketAccessIds: interaction.data.values,
             },
           }
         );
@@ -78,23 +78,23 @@ module.exports = {
         });
       } else if (interaction.data.componentType === ComponentTypes.Button) {
         const panelMessage = await client.getMessage(
-          panelData.channelID,
-          panelData.messageID
+          panelData.channelId,
+          panelData.messageId
         );
 
         if (category === "embed" && action === "edit") {
           client.createInteractionResponse(interaction.id, interaction.token, {
             type: InteractionCallbackType.Modal,
             data: {
-              customID: `${panelID}.embed.edit`,
-              title: `Customize \`${panelID}\` Embed`,
+              customId: `${panelId}.embed.edit`,
+              title: `Customize \`${panelId}\` Embed`,
               components: [
                 {
                   type: ComponentTypes.Label,
                   label: "Title",
                   component: {
                     type: ComponentTypes.TextInput,
-                    customID: `${panelID}.embed.edit.title`,
+                    customId: `${panelId}.embed.edit.title`,
                     style: TextInputStyles.Paragraph,
                     minLength: 0,
                     maxLength: 256,
@@ -111,7 +111,7 @@ module.exports = {
                   label: "Description",
                   component: {
                     type: ComponentTypes.TextInput,
-                    customID: `${panelID}.embed.edit.description`,
+                    customId: `${panelId}.embed.edit.description`,
                     style: TextInputStyles.Paragraph,
                     minLength: 1,
                     maxLength: 4000,
@@ -125,7 +125,7 @@ module.exports = {
                   label: "Color",
                   component: {
                     type: ComponentTypes.TextInput,
-                    customID: `${panelID}.embed.edit.color`,
+                    customId: `${panelId}.embed.edit.color`,
                     style: TextInputStyles.Short,
                     minLength: 1,
                     maxLength: 10,
@@ -159,15 +159,15 @@ module.exports = {
               {
                 type: InteractionCallbackType.Modal,
                 data: {
-                  customID: `${panelID}.button.add`,
-                  title: `Add Button To \`${panelID}\``,
+                  customId: `${panelId}.button.add`,
+                  title: `Add Button To \`${panelId}\``,
                   components: [
                     {
                       type: ComponentTypes.Label,
                       label: "Label",
                       component: {
                         type: ComponentTypes.TextInput,
-                        customID: `${panelID}.button.add.label`,
+                        customId: `${panelId}.button.add.label`,
                         style: TextInputStyles.Short,
                         minLength: 0,
                         maxLength: 80,
@@ -179,7 +179,7 @@ module.exports = {
                       label: "Emoji",
                       component: {
                         type: ComponentTypes.TextInput,
-                        customID: `${panelID}.button.add.emoji`,
+                        customId: `${panelId}.button.add.emoji`,
                         style: TextInputStyles.Short,
                         minLength: 1,
                         maxLength: 1,
@@ -191,7 +191,7 @@ module.exports = {
                       label: "Style",
                       component: {
                         type: ComponentTypes.StringSelect,
-                        customID: `${panelID}.button.add.style`,
+                        customId: `${panelId}.button.add.style`,
                         options: [
                           {
                             label: "Blurple",
@@ -245,12 +245,12 @@ module.exports = {
                 }
               );
 
-            const i = customID.split(".")[3];
+            const i = customId.split(".")[3];
 
             if (i) {
               panelMessage.components[0].components.splice(Number(i), 1);
 
-              client.editMessage(panelData.channelID, panelData.messageID, {
+              client.editMessage(panelData.channelId, panelData.messageId, {
                 embeds: panelMessage.embeds,
                 components: [
                   {
@@ -258,7 +258,7 @@ module.exports = {
                     components: panelMessage.components[0].components.map(
                       (component, index) => ({
                         ...component,
-                        customID: `open.${panelID}.${index}`,
+                        customId: `open.${panelId}.${index}`,
                       })
                     ),
                   },
@@ -278,7 +278,7 @@ module.exports = {
                         components: panelMessage.components[0].components.map(
                           (component, index) => ({
                             ...component,
-                            customID: `${panelID}.button.edit.${index}`,
+                            customId: `${panelId}.button.edit.${index}`,
                           })
                         ),
                       },
@@ -289,19 +289,19 @@ module.exports = {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Primary,
                             label: "Edit Embed",
-                            customID: `${panelID}.embed.edit`,
+                            customId: `${panelId}.embed.edit`,
                           },
                           {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Success,
                             label: "Add Button",
-                            customID: `${panelID}.button.add`,
+                            customId: `${panelId}.button.add`,
                           },
                           {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Danger,
                             label: "Remove Button",
-                            customID: `${panelID}.button.remove`,
+                            customId: `${panelId}.button.remove`,
                           },
                         ],
                       },
@@ -325,7 +325,7 @@ module.exports = {
                         components: panelMessage.components[0].components.map(
                           (component, index) => ({
                             ...component,
-                            customID: `${panelID}.button.remove.${index}`,
+                            customId: `${panelId}.button.remove.${index}`,
                           })
                         ),
                       },
@@ -336,21 +336,21 @@ module.exports = {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Primary,
                             label: "Edit Embed",
-                            customID: `${panelID}.embed.edit`,
+                            customId: `${panelId}.embed.edit`,
                             disabled: true,
                           },
                           {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Success,
                             label: "Add Button",
-                            customID: `${panelID}.button.add`,
+                            customId: `${panelId}.button.add`,
                             disabled: true,
                           },
                           {
                             type: ComponentTypes.Button,
                             style: ButtonStyles.Danger,
                             label: "Remove Button",
-                            customID: `${panelID}.button.remove`,
+                            customId: `${panelId}.button.remove`,
                             disabled: true,
                           },
                         ],
@@ -361,11 +361,11 @@ module.exports = {
               );
             }
           } else if (action === "edit") {
-            const index = customID.split(".")[3];
+            const index = customId.split(".")[3];
 
             const panelMessage = await client.getMessage(
-              panelData.channelID,
-              panelData.messageID
+              panelData.channelId,
+              panelData.messageId
             );
 
             client.createInteractionResponse(
@@ -374,15 +374,15 @@ module.exports = {
               {
                 type: InteractionCallbackType.Modal,
                 data: {
-                  customID: `${panelID}.button.edit.${index}`,
-                  title: `Add Button To \`${panelID}\``,
+                  customId: `${panelId}.button.edit.${index}`,
+                  title: `Add Button To \`${panelId}\``,
                   components: [
                     {
                       type: ComponentTypes.Label,
                       label: "Label",
                       component: {
                         type: ComponentTypes.TextInput,
-                        customID: `${panelID}.button.edit.${index}.label`,
+                        customId: `${panelId}.button.edit.${index}.label`,
                         style: TextInputStyles.Short,
                         minLength: 0,
                         maxLength: 80,
@@ -397,7 +397,7 @@ module.exports = {
                       label: "Emoji",
                       component: {
                         type: ComponentTypes.TextInput,
-                        customID: `${panelID}.button.edit.${index}.emoji`,
+                        customId: `${panelId}.button.edit.${index}.emoji`,
                         style: TextInputStyles.Short,
                         minLength: 1,
                         maxLength: 3,
@@ -416,7 +416,7 @@ module.exports = {
                       label: "Style",
                       component: {
                         type: ComponentTypes.StringSelect,
-                        customID: `${panelID}.button.edit.${index}.style`,
+                        customId: `${panelId}.button.edit.${index}.style`,
                         options: [
                           {
                             label: "Blurple",
@@ -476,8 +476,8 @@ module.exports = {
       }
     } else if (interaction.type === InteractionType.ModalSubmit) {
       const panelMessage = await client.getMessage(
-        panelData.channelID,
-        panelData.messageID
+        panelData.channelId,
+        panelData.messageId
       );
 
       if (category === "embed" && action === "edit") {
@@ -485,7 +485,7 @@ module.exports = {
         const description = interaction.data.components[1].component.value;
         const color = interaction.data.components[2].component.value;
 
-        client.editMessage(panelData.channelID, panelData.messageID, {
+        client.editMessage(panelData.channelId, panelData.messageId, {
           components: panelMessage.components,
           embeds: [
             {
@@ -506,7 +506,7 @@ module.exports = {
                 components: panelMessage.components[0].components.map(
                   (component, index) => ({
                     ...component,
-                    customID: `${panelID}.button.edit.${index}`,
+                    customId: `${panelId}.button.edit.${index}`,
                   })
                 ),
               },
@@ -517,19 +517,19 @@ module.exports = {
                     type: ComponentTypes.Button,
                     style: ButtonStyles.Primary,
                     label: "Edit Embed",
-                    customID: `${panelID}.embed.edit`,
+                    customId: `${panelId}.embed.edit`,
                   },
                   {
                     type: ComponentTypes.Button,
                     style: ButtonStyles.Success,
                     label: "Add Button",
-                    customID: `${panelID}.button.add`,
+                    customId: `${panelId}.button.add`,
                   },
                   {
                     type: ComponentTypes.Button,
                     style: ButtonStyles.Danger,
                     label: "Remove Button",
-                    customID: `${panelID}.button.remove`,
+                    customId: `${panelId}.button.remove`,
                   },
                 ],
               },
@@ -577,14 +577,14 @@ module.exports = {
             type: ComponentTypes.Button,
           });
 
-          client.editMessage(panelData.channelID, panelData.messageID, {
+          client.editMessage(panelData.channelId, panelData.messageId, {
             components: [
               {
                 type: ComponentTypes.ActionRow,
                 components: panelMessage.components[0].components.map(
                   (component, index) => ({
                     ...component,
-                    customID: `open.${panelID}.${index}`,
+                    customId: `open.${panelId}.${index}`,
                   })
                 ),
               },
@@ -602,7 +602,7 @@ module.exports = {
                   components: panelMessage.components[0].components.map(
                     (component, index) => ({
                       ...component,
-                      customID: `${panelID}.button.edit.${index}`,
+                      customId: `${panelId}.button.edit.${index}`,
                     })
                   ),
                 },
@@ -613,19 +613,19 @@ module.exports = {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Primary,
                       label: "Edit Embed",
-                      customID: `${panelID}.embed.edit`,
+                      customId: `${panelId}.embed.edit`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Success,
                       label: "Add Button",
-                      customID: `${panelID}.button.add`,
+                      customId: `${panelId}.button.add`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Danger,
                       label: "Remove Button",
-                      customID: `${panelID}.button.remove`,
+                      customId: `${panelId}.button.remove`,
                     },
                   ],
                 },
@@ -634,7 +634,7 @@ module.exports = {
             },
           });
         } else if (action === "edit") {
-          const i = customID.split(".")[3];
+          const i = customId.split(".")[3];
 
           const label = interaction.data.components[0].component.value;
           const emoji = interaction.data.components[1].component.value;
@@ -668,7 +668,7 @@ module.exports = {
             style,
           };
 
-          client.editMessage(panelData.channelID, panelData.messageID, {
+          client.editMessage(panelData.channelId, panelData.messageId, {
             embeds: panelMessage.embeds,
             components: [
               {
@@ -676,7 +676,7 @@ module.exports = {
                 components: panelMessage.components[0].components.map(
                   (component, index) => ({
                     ...component,
-                    customID: `open.${panelID}.${index}`,
+                    customId: `open.${panelId}.${index}`,
                   })
                 ),
               },
@@ -693,7 +693,7 @@ module.exports = {
                   components: panelMessage.components[0].components.map(
                     (component, index) => ({
                       ...component,
-                      customID: `${panelID}.button.edit.${index}`,
+                      customId: `${panelId}.button.edit.${index}`,
                     })
                   ),
                 },
@@ -704,19 +704,19 @@ module.exports = {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Primary,
                       label: "Edit Embed",
-                      customID: `${panelID}.embed.edit`,
+                      customId: `${panelId}.embed.edit`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Success,
                       label: "Add Button",
-                      customID: `${panelID}.button.add`,
+                      customId: `${panelId}.button.add`,
                     },
                     {
                       type: ComponentTypes.Button,
                       style: ButtonStyles.Danger,
                       label: "Remove Button",
-                      customID: `${panelID}.button.remove`,
+                      customId: `${panelId}.button.remove`,
                     },
                   ],
                 },

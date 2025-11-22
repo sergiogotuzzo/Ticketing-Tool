@@ -22,11 +22,11 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-    if (interaction.data.customID !== "close") return;
+    if (interaction.data.customId !== "close") return;
 
     const ticketData = await Ticket.findOne({
-      guildID: interaction.guildID,
-      channelID: interaction.channelID,
+      guildId: interaction.guildId,
+      channelId: interaction.channelId,
     }).catch(console.error);
 
     if (!ticketData) return;
@@ -35,7 +35,7 @@ module.exports = {
       type: InteractionCallbackType.DeferredUpdateMessage,
     });
 
-    client.editMessage(interaction.channelID, ticketData.messageID, {
+    client.editMessage(interaction.channelId, ticketData.messageId, {
       embeds: [
         {
           title: `${interaction.member.user.username}'s ticket`,
@@ -51,7 +51,7 @@ module.exports = {
             {
               type: ComponentTypes.Button,
               style: ButtonStyles.Danger,
-              customID: "close",
+              customId: "close",
               emoji: {
                 id: null,
                 name: "⛔",
@@ -61,7 +61,7 @@ module.exports = {
             {
               type: ComponentTypes.Button,
               style: ButtonStyles.Secondary,
-              customID: "transcript",
+              customId: "transcript",
               emoji: {
                 id: null,
                 name: "📑",
@@ -75,19 +75,19 @@ module.exports = {
 
     setTimeout(async () => {
       client.deleteChannel(
-        interaction.channelID,
+        interaction.channelId,
         `Ticket closed by @${interaction.member.user.username}`
       );
 
       await Ticket.findOneAndDelete({
-        guildID: interaction.guildID,
-        channelID: interaction.channelID,
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
       });
 
-      sendLogMessage(client, interaction.guildID, "CLOSE", {
+      sendLogMessage(client, interaction.guildId, "CLOSE", {
         ticketName: interaction.channel.name,
-        ownerID: ticketData.ownerID,
-        guiltyID: interaction.member.user.id,
+        ownerId: ticketData.ownerId,
+        guiltyId: interaction.member.user.id,
       });
     }, 5000);
   },

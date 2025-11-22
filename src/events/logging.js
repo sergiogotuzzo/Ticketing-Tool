@@ -19,21 +19,21 @@ module.exports = {
 
     if (
       interaction.data.componentType === ComponentTypes.ChannelSelect &&
-      interaction.data.customID === "logging.channel.set"
+      interaction.data.customId === "logging.channel.set"
     ) {
       const loggingData = await Logging.findOne({
-        guildID: interaction.guildID,
+        guildId: interaction.guildId,
       }).catch(console.error);
 
       if (!loggingData) return;
 
       await Logging.findOneAndUpdate(
         {
-          guildID: interaction.guildID,
+          guildId: interaction.guildId,
         },
         {
           $set: {
-            channelID: interaction.data.values[0] ?? null,
+            channelId: interaction.data.values[0] ?? null,
           },
         }
       );
@@ -43,17 +43,17 @@ module.exports = {
       });
     } else if (
       interaction.data.componentType === ComponentTypes.StringSelect &&
-      interaction.data.customID === "logging.actions.set"
+      interaction.data.customId === "logging.actions.set"
     ) {
       const loggingData = await Logging.findOne({
-        guildID: interaction.guildID,
+        guildId: interaction.guildId,
       }).catch(console.error);
 
       if (!loggingData) return;
 
       await Logging.findOneAndUpdate(
         {
-          guildID: interaction.guildID,
+          guildId: interaction.guildId,
         },
         {
           $set: {

@@ -3,10 +3,10 @@ const { model, Schema } = require("mongoose");
 module.exports = model(
   "Ticket",
   new Schema({
-    guildID: String,
-    channelID: String,
-    ownerID: String,
-    messageID: String,
-    panelID: String,
+    guildId: String,
+    channelId: String,
+    ownerId: String,
+    messageId: String,
+    panelId: String,
   })
 );

@@ -4,29 +4,29 @@ const Logging = require("../models/Logging");
 /**
  *
  * @param {Client} client
- * @param {*} guildID
+ * @param {*} guildId
  * @param {*} action
  * @param {*} data
  * @returns
  */
-async function sendLogMessage(client, guildID, action, data) {
+async function sendLogMessage(client, guildId, action, data) {
   const loggingData = await Logging.findOne({
-    guildID,
+    guildId,
   }).catch(console.error);
 
   if (!loggingData) return;
-  if (!loggingData.channelID || !loggingData.actions.includes(action)) return;
+  if (!loggingData.channelId || !loggingData.actions.includes(action)) return;
 
   let embed = {
     title: "",
-    description: `**Owner**: ${userMention(data.ownerID)}`,
+    description: `**Owner**: ${userMention(data.ownerId)}`,
     timestamp: new Date().toISOString(),
   };
 
-  if (data.guiltyID)
-    embed.description += `\n**By**: ${userMention(data.guiltyID)}`;
-  if (data.victimID)
-    embed.description += `\n**User**: ${userMention(data.victimID)}`;
+  if (data.guiltyId)
+    embed.description += `\n**By**: ${userMention(data.guiltyId)}`;
+  if (data.victimId)
+    embed.description += `\n**User**: ${userMention(data.victimId)}`;
 
   switch (action) {
     case "OPEN":
@@ -56,7 +56,7 @@ async function sendLogMessage(client, guildID, action, data) {
       break;
   }
 
-  client.createMessage(loggingData.channelID, {
+  client.createMessage(loggingData.channelId, {
     embeds: [embed],
   });
 }
@@ -64,19 +64,19 @@ async function sendLogMessage(client, guildID, action, data) {
 /**
  *
  * @param {Client} client
- * @param {*} guildID
+ * @param {*} guildId
  * @param {import("disgroove").File} file
  * @returns
  */
-async function sendLogTranscript(client, guildID, file) {
+async function sendLogTranscript(client, guildId, file) {
   const loggingData = await Logging.findOne({
-    guildID,
+    guildId,
   }).catch(console.error);
 
   if (!loggingData) return;
-  if (!loggingData.channelID) return;
+  if (!loggingData.channelId) return;
 
-  client.createMessage(loggingData.channelID, {
+  client.createMessage(loggingData.channelId, {
     files: [file],
   });
 }

@@ -3,8 +3,8 @@ const { model, Schema } = require("mongoose");
 module.exports = model(
   "Logging",
   new Schema({
-    guildID: String,
-    channelID: String,
+    guildId: String,
+    channelId: String,
     actions: Array,
   })
 );

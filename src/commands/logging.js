@@ -19,13 +19,13 @@ module.exports = {
    */
   run: async (client, interaction) => {
     const loggingData = await Logging.findOne({
-      guildID: interaction.guildID,
+      guildId: interaction.guildId,
     }).catch(console.error);
 
     if (!loggingData)
       Logging.create({
-        guildID: interaction.guildID,
-        channelID: null,
+        guildId: interaction.guildId,
+        channelId: null,
         actions: [],
       });
 
@@ -47,13 +47,13 @@ module.exports = {
             components: [
               {
                 type: ComponentTypes.ChannelSelect,
-                customID: "logging.channel.set",
+                customId: "logging.channel.set",
                 channelTypes: [ChannelTypes.GuildText],
                 placeholder: "Select the logging channel",
-                defaultValues: loggingData.channelID
+                defaultValues: loggingData.channelId
                   ? [
                       {
-                        id: loggingData.channelID,
+                        id: loggingData.channelId,
                         type: "channel",
                       },
                     ]
@@ -68,7 +68,7 @@ module.exports = {
             components: [
               {
                 type: ComponentTypes.StringSelect,
-                customID: "logging.actions.set",
+                customId: "logging.actions.set",
                 options: [
                   {
                     label: "Ticket opening",

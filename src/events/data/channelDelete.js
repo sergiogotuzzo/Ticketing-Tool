@@ -12,45 +12,45 @@ module.exports = {
    */
   run: async (client, channel) => {
     const ticketData = await Ticket.findOne({
-      guildID: channel.guildID,
-      channelID: channel.id,
+      guildId: channel.guildId,
+      channelId: channel.id,
     }).catch(console.error);
 
     if (ticketData) {
       await Ticket.findOneAndDelete({
-        guildID: channel.guildID,
-        channelID: channel.id,
+        guildId: channel.guildId,
+        channelId: channel.id,
       });
     }
 
     const loggingData = await Logging.findOne({
-      guildID: channel.guildID,
-      channelID: channel.id,
+      guildId: channel.guildId,
+      channelId: channel.id,
     }).catch(console.error);
 
     if (loggingData) {
       await Logging.findOneAndUpdate(
         {
-          guildID: channel.guildID,
-          channelID: channel.id,
+          guildId: channel.guildId,
+          channelId: channel.id,
         },
         {
           $set: {
-            channelID: null,
+            channelId: null,
           },
         }
       );
     }
 
     const panelData = await Panel.findOne({
-      guildID: channel.guildID,
-      channelID: channel.id,
+      guildId: channel.guildId,
+      channelId: channel.id,
     });
 
     if (panelData) {
       await Panel.findOneAndDelete({
-        guildID: channel.guildID,
-        channelID: channel.id,
+        guildId: channel.guildId,
+        channelId: channel.id,
       });
     }
   },

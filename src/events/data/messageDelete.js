@@ -11,13 +11,13 @@ module.exports = {
    */
   run: async (client, message) => {
     const ticketData = await Ticket.findOne({
-      guildID: message.guildID,
-      messageID: message.id,
+      guildId: message.guildId,
+      messageId: message.id,
     }).catch(console.error);
 
     if (ticketData) {
-      const ticketOwner = await client.getUser(ticketData.ownerID);
-      const ticketMessage = await client.createMessage(ticketData.channelID, {
+      const ticketOwner = await client.getUser(ticketData.ownerId);
+      const ticketMessage = await client.createMessage(ticketData.channelId, {
         embeds: [
           {
             title: `${ticketOwner.username}'s ticket`,
@@ -33,7 +33,7 @@ module.exports = {
               {
                 type: ComponentTypes.Button,
                 style: ButtonStyles.Danger,
-                customID: "close",
+                customId: "close",
                 emoji: {
                   id: null,
                   name: "⛔",
@@ -42,7 +42,7 @@ module.exports = {
               {
                 type: ComponentTypes.Button,
                 style: ButtonStyles.Secondary,
-                customID: "transcript",
+                customId: "transcript",
                 emoji: {
                   id: null,
                   name: "📑",
@@ -53,32 +53,32 @@ module.exports = {
         ],
       });
 
-      client.pinMessage(ticketData.channelID, ticketMessage.id);
+      client.pinMessage(ticketData.channelId, ticketMessage.id);
 
       await Ticket.findOneAndUpdate(
         {
-          guildID: message.guildID,
-          messageID: message.id,
+          guildId: message.guildId,
+          messageId: message.id,
         },
         {
           $set: {
-            messageID: ticketMessage.id,
+            messageId: ticketMessage.id,
           },
         }
       );
     }
 
     const panelData = await Panel.findOne({
-      guildID: message.guildID,
-      channelID: message.channelID,
-      messageID: message.id,
+      guildId: message.guildId,
+      channelId: message.channelId,
+      messageId: message.id,
     });
 
     if (panelData) {
       await Panel.findOneAndDelete({
-        guildID: message.guildID,
-        channelID: message.channelID,
-        messageID: message.id,
+        guildId: message.guildId,
+        channelId: message.channelId,
+        messageId: message.id,
       });
     }
   },

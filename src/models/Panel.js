@@ -3,11 +3,11 @@ const { model, Schema } = require("mongoose");
 module.exports = model(
   "Panel",
   new Schema({
-    guildID: String,
-    channelID: String,
-    messageID: String,
-    panelID: String,
-    ticketsParentID: String,
-    ticketAccessIDs: Array,
+    guildId: String,
+    channelId: String,
+    messageId: String,
+    panelId: String,
+    ticketsParentId: String,
+    ticketAccessIds: Array,
   })
 );

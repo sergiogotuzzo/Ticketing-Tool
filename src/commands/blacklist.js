@@ -94,14 +94,14 @@ module.exports = {
    */
   run: async (client, interaction) => {
     const blacklistData = await Blacklist.findOne({
-      guildID: interaction.guildID,
+      guildId: interaction.guildId,
     }).catch(console.error);
 
     if (!blacklistData)
       Blacklist.create({
-        guildID: interaction.guildID,
-        usersIDs: [],
-        rolesIDs: [],
+        guildId: interaction.guildId,
+        usersIds: [],
+        rolesIds: [],
       });
 
     const subCommandGroup = interaction.data.options.find(
@@ -118,11 +118,11 @@ module.exports = {
           switch (subCommand.name) {
             case "add":
               {
-                const userID = subCommand.options.find(
+                const userId = subCommand.options.find(
                   (option) => option.type === ApplicationCommandOptionType.User
                 ).value;
 
-                if (blacklistData.usersIDs.includes(userID))
+                if (blacklistData.usersIds.includes(userId))
                   return client.createInteractionResponse(
                     interaction.id,
                     interaction.token,
@@ -131,13 +131,13 @@ module.exports = {
                       data: {
                         flags: MessageFlags.Ephemeral,
                         content: `${userMention(
-                          userID
+                          userId
                         )} is already in the blacklist.`,
                       },
                     }
                   );
 
-                blacklistData.usersIDs.push(userID);
+                blacklistData.usersIds.push(userId);
                 blacklistData.save();
 
                 client.createInteractionResponse(
@@ -147,7 +147,7 @@ module.exports = {
                     type: InteractionCallbackType.ChannelMessageWithSource,
                     data: {
                       flags: MessageFlags.Ephemeral,
-                      content: `Added ${userMention(userID)} to the blacklist.`,
+                      content: `Added ${userMention(userId)} to the blacklist.`,
                     },
                   }
                 );
@@ -155,11 +155,11 @@ module.exports = {
               break;
             case "remove":
               {
-                const userID = subCommand.options.find(
+                const userId = subCommand.options.find(
                   (option) => option.type === ApplicationCommandOptionType.User
                 ).value;
 
-                if (!blacklistData.usersIDs.includes(userID))
+                if (!blacklistData.usersIds.includes(userId))
                   return client.createInteractionResponse(
                     interaction.id,
                     interaction.token,
@@ -168,14 +168,14 @@ module.exports = {
                       data: {
                         flags: MessageFlags.Ephemeral,
                         content: `${userMention(
-                          userID
+                          userId
                         )} is not in the blacklist.`,
                       },
                     }
                   );
 
-                blacklistData.usersIDs = blacklistData.usersIDs.filter(
-                  (id) => id != userID
+                blacklistData.usersIds = blacklistData.usersIds.filter(
+                  (id) => id != userId
                 );
                 blacklistData.save();
 
@@ -187,7 +187,7 @@ module.exports = {
                     data: {
                       flags: MessageFlags.Ephemeral,
                       content: `Removed ${userMention(
-                        userID
+                        userId
                       )} from the blacklist.`,
                     },
                   }
@@ -206,11 +206,11 @@ module.exports = {
           switch (subCommand.name) {
             case "add":
               {
-                const roleID = subCommand.options.find(
+                const roleId = subCommand.options.find(
                   (option) => option.type === ApplicationCommandOptionType.Role
                 ).value;
 
-                if (blacklistData.rolesIDs.includes(roleID))
+                if (blacklistData.rolesIds.includes(roleId))
                   return client.createInteractionResponse(
                     interaction.id,
                     interaction.token,
@@ -219,13 +219,13 @@ module.exports = {
                       data: {
                         flags: MessageFlags.Ephemeral,
                         content: `${roleMention(
-                          roleID
+                          roleId
                         )} is already in the blacklist.`,
                       },
                     }
                   );
 
-                blacklistData.rolesIDs.push(roleID);
+                blacklistData.rolesIds.push(roleId);
                 blacklistData.save();
 
                 client.createInteractionResponse(
@@ -235,7 +235,7 @@ module.exports = {
                     type: InteractionCallbackType.ChannelMessageWithSource,
                     data: {
                       flags: MessageFlags.Ephemeral,
-                      content: `Added ${roleMention(roleID)} to the blacklist.`,
+                      content: `Added ${roleMention(roleId)} to the blacklist.`,
                     },
                   }
                 );
@@ -243,11 +243,11 @@ module.exports = {
               break;
             case "remove":
               {
-                const roleID = subCommand.options.find(
+                const roleId = subCommand.options.find(
                   (option) => option.type === ApplicationCommandOptionType.Role
                 ).value;
 
-                if (!blacklistData.rolesIDs.includes(roleID))
+                if (!blacklistData.rolesIds.includes(roleId))
                   return client.createInteractionResponse(
                     interaction.id,
                     interaction.token,
@@ -256,14 +256,14 @@ module.exports = {
                       data: {
                         flags: MessageFlags.Ephemeral,
                         content: `${roleMention(
-                          roleID
+                          roleId
                         )} is not in the blacklist.`,
                       },
                     }
                   );
 
-                blacklistData.rolesIDs = blacklistData.rolesIDs.filter(
-                  (id) => id != roleID
+                blacklistData.rolesIds = blacklistData.rolesIds.filter(
+                  (id) => id != roleId
                 );
                 blacklistData.save();
 
@@ -275,7 +275,7 @@ module.exports = {
                     data: {
                       flags: MessageFlags.Ephemeral,
                       content: `Removed ${roleMention(
-                        roleID
+                        roleId
                       )} from the blacklist.`,
                     },
                   }
@@ -306,9 +306,9 @@ module.exports = {
                     {
                       name: "Roles",
                       value:
-                        blacklistData.rolesIDs.length !== 0
-                          ? `${blacklistData.rolesIDs.map(
-                              (roleID) => `- ${roleMention(roleID)}`
+                        blacklistData.rolesIds.length !== 0
+                          ? `${blacklistData.rolesIds.map(
+                              (roleId) => `- ${roleMention(roleId)}`
                             )}`
                           : "None",
                       inline: true,
@@ -316,9 +316,9 @@ module.exports = {
                     {
                       name: "Users",
                       value:
-                        blacklistData.usersIDs.length !== 0
-                          ? `${blacklistData.usersIDs.map(
-                              (userID) => `- ${userMention(userID)}`
+                        blacklistData.usersIds.length !== 0
+                          ? `${blacklistData.usersIds.map(
+                              (userId) => `- ${userMention(userId)}`
                             )}`
                           : "None",
                       inline: true,

@@ -23,11 +23,11 @@ module.exports = {
       interaction.data.componentType !== ComponentTypes.Button
     )
       return;
-    if (interaction.data.customID !== "transcript") return;
+    if (interaction.data.customId !== "transcript") return;
 
     const ticketData = await Ticket.findOne({
-      guildID: interaction.guildID,
-      channelID: interaction.channelID,
+      guildId: interaction.guildId,
+      channelId: interaction.channelId,
     }).catch(console.error);
 
     if (!ticketData) return;
@@ -48,11 +48,11 @@ module.exports = {
       },
     });
 
-    sendLogMessage(client, interaction.guildID, "TRANSCRIPT_SAVE", {
+    sendLogMessage(client, interaction.guildId, "TRANSCRIPT_SAVE", {
       ticketName: interaction.channel.name,
-      ownerID: ticketData.ownerID,
-      guiltyID: interaction.member.user.id,
+      ownerId: ticketData.ownerId,
+      guiltyId: interaction.member.user.id,
     });
-    sendLogTranscript(client, interaction.guildID, transcriptFile);
+    sendLogTranscript(client, interaction.guildId, transcriptFile);
   },
 };
