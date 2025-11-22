@@ -28,7 +28,7 @@ module.exports = {
         },
         {
           name: "id",
-          description: "The Id of the panel.",
+          description: "The ID of the panel.",
           type: ApplicationCommandOptionType.String,
         },
       ],
@@ -40,7 +40,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The Id of the panel.",
+          description: "The ID of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -66,7 +66,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The Id of the panel.",
+          description: "The ID of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -79,7 +79,7 @@ module.exports = {
       options: [
         {
           name: "id",
-          description: "The Id of the panel.",
+          description: "The ID of the panel.",
           type: ApplicationCommandOptionType.String,
           required: true,
         },
@@ -261,7 +261,7 @@ module.exports = {
               {
                 type: InteractionCallbackType.ChannelMessageWithSource,
                 data: {
-                  content: `The Id of ${link} is \`${panel.panelId}\`.`,
+                  content: `The ID of ${link} is \`${panel.panelId}\`.`,
                   flags: MessageFlags.Ephemeral,
                 },
               }
