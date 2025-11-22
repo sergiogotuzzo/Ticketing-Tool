@@ -7,6 +7,7 @@ const {
   channelMention,
   BitwisePermissionFlags,
   userMention,
+  hasPermission,
 } = require("disgroove");
 const Ticket = require("../../models/Ticket");
 const { sendLogMessage } = require("../../util/logging");
