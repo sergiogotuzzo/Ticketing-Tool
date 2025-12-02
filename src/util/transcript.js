@@ -13,7 +13,7 @@ async function getAllMessages(client, channelId) {
   while (true) {
     let messages = await client.getMessages(channelId, {
       limit: 100,
-      before: lastMessageId
+      before: lastMessageId,
     });
 
     allMessages = allMessages.concat(Array.from(messages.values()));
@@ -46,7 +46,8 @@ async function getTranscriptMessage(client, interaction) {
       const dateString = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`;
 
       transcriptMessage += `${dateString} - @${msg.author.username}: ${
-        msg.content || "No message content. Maybe the user sent an embed, a sticker, a component (like buttons, menus, etc...) or a file."
+        msg.content ||
+        "No message content. Maybe the user sent an embed, a sticker, a component (like buttons, menus, etc...) or a file."
       }\n`;
     }
   );
