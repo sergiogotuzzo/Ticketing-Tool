@@ -9,7 +9,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "disgroove": "^3.0.0-dev.2cf2b90",
+    "disgroove": "^3.0.0-dev.2a75a93",
     "mongoose": "^8.9.6"
   }
 }
