@@ -111,8 +111,6 @@ module.exports = {
             ? subCommand.options.find((option) => option.name === "id").value
             : Math.random().toString(16).slice(2);
 
-          console.log(channelId);
-
           if (panelId.length > 93)
             return client.createInteractionResponse(
               interaction.id,
