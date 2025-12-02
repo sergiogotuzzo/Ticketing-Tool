@@ -11,11 +11,10 @@ async function getAllMessages(client, channelId) {
   let lastMessageId;
 
   while (true) {
-    const options = { limit: 100 };
-
-    if (lastMessageId) options.before = lastMessageId;
-
-    let messages = await client.getMessages(channelId, options);
+    let messages = await client.getMessages(channelId, {
+      limit: 100,
+      before: lastMessageId
+    });
 
     allMessages = allMessages.concat(Array.from(messages.values()));
 
