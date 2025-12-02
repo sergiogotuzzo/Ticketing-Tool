@@ -47,7 +47,7 @@ async function getTranscriptMessage(client, interaction) {
       const dateString = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`;
 
       transcriptMessage += `${dateString} - @${msg.author.username}: ${
-        msg.content || ""
+        msg.content || "No message content. Maybe the user sent an embed, a sticker, a component (like buttons, menus, etc...) or a file."
       }\n`;
     }
   );
